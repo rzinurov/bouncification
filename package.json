@@ -1,0 +1,59 @@
+{
+  "name": "jellify",
+  "version": "1.0.0",
+  "description": "Jellify",
+  "scripts": {
+    "start": "parcel src/client/index.html -p 8000 --out-dir dist/client",
+    "start-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -r tsconfig-paths/register src/server/index.ts",
+    "build": "parcel build src/client/index.html --out-dir dist/client",
+    "build-server": "npm run clean-server && tsc --project tsconfig.server.json && node node_modules/copyfiles/copyfiles package.json ./dist/server && node node_modules/copyfiles/copyfiles arena.env ./dist/server && node node_modules/copyfiles/copyfiles -u 1 src/server/static/* ./dist/server",
+    "clean-server": "node node_modules/rimraf/bin dist/server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
+  },
+  "author": "rzinurov",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rzinurov/jellify.git"
+  },
+  "homepage": "https://github.com/rzinurov/jellify",
+  "devDependencies": {
+    "@colyseus/loadtest": "^0.14.4",
+    "@colyseus/testing": "^0.14.21",
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.1",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^8.5.0",
+    "minimist": ">=1.2.2",
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-clean-easy": "^1.0.2",
+    "parcel-plugin-static-files-copy": "^2.4.3",
+    "ts-node-dev": "^1.1.8",
+    "tsconfig-paths": "^3.12.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@colyseus/arena": "^0.14.22",
+    "@colyseus/monitor": "^0.14.20",
+    "colyseus": "^0.14.20",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "phaser": "^3.55.2",
+    "regenerator-runtime": "^0.13.9",
+    "unique-names-generator": "^4.6.0"
+  },
+  "parcelCleanPaths": [
+    "dist/client"
+  ],
+  "staticFiles": {
+    "staticPath": "public",
+    "watcherGlob": "**"
+  },
+  "alias": {
+    "client": "./src/client",
+    "common": "./src/common",
+    "server": "./src/server"
+  }
+}
