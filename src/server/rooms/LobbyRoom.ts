@@ -1,5 +1,5 @@
 import { Room, Client } from "colyseus";
-import { LobbyState } from "common/rooms/schema/LobbyState";
+import { LobbyState } from "common/schema/LobbyState";
 
 export class LobbyRoom extends Room<LobbyState> {
   onCreate(options: any) {

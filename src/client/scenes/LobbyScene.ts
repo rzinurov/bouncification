@@ -1,66 +1,43 @@
-import Phaser from "phaser";
-import * as Colyseus from "colyseus.js";
-import Rooms from "common/consts/Rooms";
-import { LobbyState } from "common/rooms/schema/LobbyState";
-import { LobbyRoom } from "colyseus";
-import { PlayerState } from "common/rooms/schema/PlayerState";
+import Server from "client/services/Server";
 import Names from "client/utils/Names";
+import Phaser from "phaser";
 
 export default class LobbyScene extends Phaser.Scene {
-  private client!: Colyseus.Client;
-
   constructor() {
     super("lobby");
   }
 
-  preload() {}
+  async create(data: { server: Server }) {
+    const { server } = data;
 
-  init() {
-    this.client = new Colyseus.Client("ws://localhost:2567");
-  }
-
-  async create() {
-    const room = (await this.client.joinOrCreate(Rooms.Lobby, {
-      name: Names.randomName(),
-    })) as unknown as LobbyRoom;
-
-    console.log("joined room", room);
-
-    const sessionId = (room as any).sessionId;
+    await server.join(Names.randomName());
 
     const players = {};
 
-    room.state.players.onAdd = (
-      playerState: PlayerState,
-      playerSessionId: string
-    ) => {
-      if (sessionId === playerSessionId) {
-        console.log("you joined as", playerState.name);
-      } else {
-        console.log(playerState.name, "joined");
-      }
+    server.onJoined(({ sessionId, state }) => {
+      console.log("you joined as", state.name);
 
-      const player = this.matter.add.circle(playerState.x, playerState.y, 16, {
+      const player = this.matter.add.circle(state.x, state.y, 16, {
         isStatic: true,
       });
+      players[sessionId] = player;
+    });
 
-      playerState.onChange = function (changes) {
-        player.position.x = playerState.x;
-        player.position.y = playerState.y;
-      };
+    server.onPlayerJoined(({ sessionId, state }) => {
+      console.log(state.name, "joined");
 
-      players[playerSessionId] = player;
-    };
+      const player = this.matter.add.circle(state.x, state.y, 16, {
+        isStatic: true,
+      });
+      players[sessionId] = player;
+    });
 
-    room.state.players.onRemove = (
-      playerState: PlayerState,
-      sessionId: string
-    ) => {
-      console.log(playerState.name, "left");
+    server.onPlayerLeft(({ sessionId, state }) => {
+      console.log(state.name, "left");
 
       this.matter.world.remove(players[sessionId]);
       delete players[sessionId];
-    };
+    });
 
     this.matter.world.setBounds();
   }

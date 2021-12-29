@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import "regenerator-runtime/runtime";
 
 import LobbyScene from "./scenes/LobbyScene";
+import BootstrapScene from "./scenes/BootstrapScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -78,7 +79,7 @@ const config: Phaser.Types.Core.GameConfig = {
       },
     },
   },
-  scene: [LobbyScene],
+  scene: [BootstrapScene, LobbyScene],
 };
 
 export default new Phaser.Game(config);
