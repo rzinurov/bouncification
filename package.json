@@ -4,10 +4,8 @@
   "description": "Jellify",
   "scripts": {
     "start": "parcel src/client/index.html -p 8000 --out-dir dist/client",
-    "start-server": "ts-node-dev --project tsconfig.server.json --respawn --transpile-only -r tsconfig-paths/register src/server/index.ts",
-    "build": "parcel build src/client/index.html --out-dir dist/client",
-    "build-server": "npm run clean-server && tsc --project tsconfig.server.json && node node_modules/copyfiles/copyfiles package.json ./dist/server && node node_modules/copyfiles/copyfiles arena.env ./dist/server && node node_modules/copyfiles/copyfiles -u 1 src/server/static/* ./dist/server",
-    "clean-server": "node node_modules/rimraf/bin dist/server",
+    "start-server": "ts-node-dev --project tsconfig.server.json --respawn -r tsconfig-paths/register src/index.ts",
+    "build": "./build.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
   },
@@ -26,6 +24,7 @@
     "@types/matter-js": "^0.17.6",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.5.0",
     "minimist": ">=1.2.2",
     "parcel-bundler": "^1.12.5",

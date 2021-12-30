@@ -11,7 +11,8 @@ enum Events {
   Disconnected = "disconnected",
 }
 
-const SERVER_ADDRESS = "ws://192.168.0.32:2567";
+const SERVER_ADDRESS = `ws://${window.location.hostname}:2567`;
+console.log("Server address", SERVER_ADDRESS);
 
 export default class Server {
   private client!: Colyseus.Client;

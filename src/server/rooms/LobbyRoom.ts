@@ -1,6 +1,6 @@
 import { Client, Room } from "colyseus";
-import { LobbyState } from "common/schema/LobbyState";
-import LobbyWorld from "server/rooms/LobbyWorld";
+import { LobbyState } from "../../common/schema/LobbyState";
+import LobbyWorld from "./LobbyWorld";
 
 export class LobbyRoom extends Room<LobbyState> {
   world!: LobbyWorld;

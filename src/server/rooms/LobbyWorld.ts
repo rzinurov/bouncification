@@ -1,8 +1,8 @@
 import { Bodies, Body, Engine, World } from "matter-js";
-import { LobbyState } from "common/schema/LobbyState";
-import { PlayerState } from "common/schema/PlayerState";
-import Sprites from "common/consts/Dimensions";
-import Dimensions from "common/consts/Dimensions";
+import { LobbyState } from "../../common/schema/LobbyState";
+import { PlayerState } from "../../common/schema/PlayerState";
+import Sprites from "../../common/consts/Dimensions";
+import Dimensions from "../../common/consts/Dimensions";
 
 export default class LobbyWorld {
   engine: Matter.Engine;
@@ -70,7 +70,7 @@ export default class LobbyWorld {
     Engine.update(this.engine, dt);
 
     Object.entries(this.players).forEach(([sessionId, player]) => {
-      const playerState = this.state.players[sessionId] as PlayerState;
+      const playerState = this.state.players.get(sessionId) as PlayerState;
       playerState.x = player.position.x;
       playerState.y = player.position.y;
       playerState.velocityX = player.velocity.x;
