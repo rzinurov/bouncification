@@ -7,46 +7,67 @@ enum Events {
   YouJoined = "you-joined",
   PlayerJoined = "player-joined",
   PlayerLeft = "player-left",
+  PlayerStateChanged = "player-state-changed",
+  Disconnected = "disconnected",
 }
+
+const SERVER_ADDRESS = "ws://192.168.0.32:2567";
 
 export default class Server {
   private client!: Colyseus.Client;
   private events: Phaser.Events.EventEmitter;
+  private room!: Colyseus.Room<LobbyState>;
 
   constructor() {
-    this.client = new Colyseus.Client("ws://localhost:2567");
+    this.client = new Colyseus.Client(SERVER_ADDRESS);
     this.events = new Phaser.Events.EventEmitter();
   }
 
   async join(name: string) {
-    const room = await this.client.joinOrCreate<LobbyState>(Rooms.Lobby, {
+    this.room = await this.client.joinOrCreate<LobbyState>(Rooms.Lobby, {
       name,
     });
 
-    console.log("joined room", room);
+    console.log("joined room", this.room);
 
-    const sessionId = room.sessionId;
+    const playerSessionId = this.room.sessionId;
 
-    room.state.players.onAdd = (
+    this.room.state.players.onAdd = (
       playerState: PlayerState,
-      playerSessionId: string
+      sessionId: string
     ) => {
-      if (sessionId === playerSessionId) {
-        this.events.emit(Events.YouJoined, { sessionId, state: playerState });
+      if (playerSessionId === sessionId) {
+        this.events.emit(Events.YouJoined, {
+          sessionId,
+          state: playerState,
+        });
       } else {
         this.events.emit(Events.PlayerJoined, {
           sessionId,
           state: playerState,
         });
       }
+      playerState.onChange = (changes: [any]) => {
+        changes.forEach((change) => {
+          playerState[change.field] = change.value;
+        });
+        this.events.emit(Events.PlayerStateChanged, {
+          sessionId,
+          state: playerState,
+        });
+      };
     };
 
-    room.state.players.onRemove = (
+    this.room.state.players.onRemove = (
       playerState: PlayerState,
       sessionId: string
     ) => {
       this.events.emit(Events.PlayerLeft, { sessionId, state: playerState });
     };
+
+    this.room.onLeave((code) => {
+      this.events.emit(Events.Disconnected);
+    });
   }
 
   onJoined(
@@ -68,5 +89,20 @@ export default class Server {
     context?: any
   ) {
     this.events.on(Events.PlayerLeft, cb, context);
+  }
+
+  onPlayerStateChanged(
+    cb: ({ sessionId: string, state: PlayerState }) => void,
+    context?: any
+  ) {
+    this.events.on(Events.PlayerStateChanged, cb, context);
+  }
+
+  onDisconnected(cb: () => void, context?: any) {
+    this.events.on(Events.Disconnected, cb, context);
+  }
+
+  jumpTo(x: number, y: number) {
+    this.room.send("jumpTo", { x, y });
   }
 }

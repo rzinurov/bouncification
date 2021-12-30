@@ -8,12 +8,4 @@ export class LobbyState extends Schema {
   constructor() {
     super();
   }
-
-  createPlayer(sessionId: string, name: string, x: number, y: number) {
-    this.players.set(sessionId, new PlayerState(name, x, y));
-  }
-
-  removePlayer(sessionId: string) {
-    this.players.delete(sessionId);
-  }
 }
