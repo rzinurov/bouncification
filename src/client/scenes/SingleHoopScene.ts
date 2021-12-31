@@ -3,6 +3,8 @@ import Names from "client/utils/Names";
 import Phaser from "phaser";
 import WorldConfig from "common/consts/WorldConfig";
 import Player from "./objects/Player";
+import { SingleHoopState } from "common/schema/SingleHoopState";
+import Hoop from "./objects/Hoop";
 
 export default class SingleHoopScene extends Phaser.Scene {
   constructor() {
@@ -20,9 +22,14 @@ export default class SingleHoopScene extends Phaser.Scene {
       await server.join(Names.randomName());
     } catch (e) {
       alert("Unable to connect to server");
+      return;
     }
 
     const players: { [name: string]: Player } = {};
+
+    server.onInitialState((state) => {
+      const hoop = new Hoop(this, state.hoop);
+    });
 
     server.onJoined(({ sessionId, state }) => {
       console.log("you joined as", state.name);

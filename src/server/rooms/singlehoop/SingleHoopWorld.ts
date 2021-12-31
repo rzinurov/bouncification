@@ -2,7 +2,8 @@ import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
 import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 import { PlayerState } from "../../../common/schema/PlayerState";
 import WorldConfig from "../../../common/consts/WorldConfig";
-import PlayerPhysics from "common/physics/PlayerPhysics";
+import PlayerPhysics from "../../../common/physics/PlayerPhysics";
+import { VectorState } from "../../../common/schema/Primitives";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;
@@ -54,6 +55,18 @@ export default class SingleHoopWorld {
     World.add(this.engine.world, [wallLeft, wallRight, wallTop, wallBottom]);
 
     this.engine.world.gravity.y = 1;
+  }
+
+  addHoop(x: number, y: number) {
+    const hoop = Bodies.rectangle(
+      x,
+      y,
+      WorldConfig.hoop.backboard.width,
+      WorldConfig.hoop.backboard.height,
+      { isStatic: true }
+    );
+    World.add(this.engine.world, [hoop]);
+    this.state.hoop.position = new VectorState(x, y);
   }
 
   addPlayer(sessionId: string, name: string, x: number, y: number) {

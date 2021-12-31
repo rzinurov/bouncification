@@ -4,6 +4,7 @@ import type { SingleHoopState } from "common/schema/SingleHoopState";
 import type { PlayerState } from "common/schema/PlayerState";
 
 enum Events {
+  InitialState = "initial-state",
   YouJoined = "you-joined",
   PlayerJoined = "player-joined",
   PlayerLeft = "player-left",
@@ -74,6 +75,14 @@ export default class Server {
     this.room.onLeave((code) => {
       this.events.emit(Events.Disconnected);
     });
+
+    this.room.onStateChange.once((state) => {
+      this.events.emit(Events.InitialState, state);
+    });
+  }
+
+  onInitialState(cb: (state: SingleHoopState) => void, context?: any) {
+    this.events.on(Events.InitialState, cb, context);
   }
 
   onJoined(
