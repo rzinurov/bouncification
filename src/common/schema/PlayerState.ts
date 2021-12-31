@@ -17,9 +17,6 @@ export class PlayerState extends Schema {
   @type("number")
   angularVelocity: number = 0;
 
-  @type("number")
-  restitution: number = 0;
-
   constructor(name: string, x: number, y: number) {
     super();
     this.name = name;

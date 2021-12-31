@@ -1,60 +1,54 @@
 import Phaser from "phaser";
 import { PlayerState } from "common/schema/PlayerState";
 import WorldConfig from "common/consts/WorldConfig";
+import PlayerPhysics from "common/physics/PlayerPhysics";
 
 export default class Player extends Phaser.GameObjects.Container {
-  physicsContainer: Phaser.Physics.Matter.Sprite;
-  sessionId: string;
-  image: Phaser.GameObjects.Image;
+  matterBody: Phaser.Physics.Matter.Sprite;
   nameLabel: Phaser.GameObjects.Text;
 
-  constructor(
-    scene: Phaser.Scene,
-    sessionId: string,
-    state: PlayerState,
-    imageName: string
-  ) {
+  constructor(scene: Phaser.Scene, state: PlayerState, imageName: string) {
     super(scene, state.position.x, state.position.y);
     this.width = WorldConfig.player.spriteSize;
     this.height = WorldConfig.player.spriteSize;
 
-    this.image = scene.add.image(0, 0, imageName);
-    this.add(this.image);
+    const image = scene.add.image(0, 0, imageName);
+    this.add(image);
 
     this.nameLabel = this.scene.add
       .text(0, -this.height * 0.9, state.name, {
-        font: `${WorldConfig.player.nameLabelSize}px Arial`,
+        font: `32px Arial`,
         color: "#ffdd00",
       })
       .setOrigin(0.5) as Phaser.GameObjects.Text;
 
-    this.sessionId = sessionId;
-    this.physicsContainer = scene.matter.add.gameObject(
+    this.matterBody = scene.matter.add.gameObject(
       this
     ) as Phaser.Physics.Matter.Sprite;
-    this.physicsContainer.setCircle(this.width / 2);
+    this.matterBody.setCircle(this.width / 2);
+    this.matterBody.setBounce(WorldConfig.player.restitution);
 
     this.scene.add.existing(this);
 
-    this.initState(state);
+    this.updateState(state);
   }
 
-  initState(state: PlayerState) {
-    this.physicsContainer.setBounce(state.restitution);
-    this.updateState(state);
+  jumpTo(pointer: { x: number; y: number }) {
+    const velocity = PlayerPhysics.getVelocity(this.matterBody, pointer);
+    this.matterBody.setVelocity(velocity.x, velocity.y);
   }
 
   updateState(state: PlayerState) {
     if (this.checkVectorDiff(this, state.position)) {
-      this.physicsContainer.setPosition(state.position.x, state.position.y);
-      this.physicsContainer.setAwake();
+      this.matterBody.setPosition(state.position.x, state.position.y);
+      this.matterBody.setAwake();
     }
     if (this.checkNumberDiff(this.angle, state.angle)) {
-      this.physicsContainer.setAngle(state.angle);
-      this.physicsContainer.setAwake();
+      this.matterBody.setAngle(state.angle);
+      this.matterBody.setAwake();
     }
-    this.physicsContainer.setVelocity(state.velocity.x, state.velocity.y);
-    this.physicsContainer.setAngularVelocity(state.angularVelocity);
+    this.matterBody.setVelocity(state.velocity.x, state.velocity.y);
+    this.matterBody.setAngularVelocity(state.angularVelocity);
   }
 
   checkVectorDiff(a: { x: number; y: number }, b: { x: number; y: number }) {

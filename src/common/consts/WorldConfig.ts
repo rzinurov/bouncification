@@ -2,7 +2,7 @@ export default {
   player: {
     spriteSize: 128,
     maxVelocity: 100,
-    nameLabelSize: 32,
+    restitution: 0.75,
   },
   bounds: {
     width: 1280,

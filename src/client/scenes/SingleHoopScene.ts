@@ -27,18 +27,19 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onJoined(({ sessionId, state }) => {
       console.log("you joined as", state.name);
 
-      const player = new Player(this, sessionId, state, "ball");
+      const player = new Player(this, state, "ball");
       players[sessionId] = player;
 
       this.input.on("pointerdown", (pointer: { x: any; y: any }) => {
-        server.jumpTo(pointer.x, pointer.y);
+        server.jumpTo(pointer);
+        player.jumpTo(pointer);
       });
     });
 
     server.onPlayerJoined(({ sessionId, state }) => {
       console.log(state.name, "joined");
 
-      const player = new Player(this, sessionId, state, "ball");
+      const player = new Player(this, state, "ball");
       players[sessionId] = player;
     });
 

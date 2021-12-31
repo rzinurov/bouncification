@@ -2,6 +2,7 @@ import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
 import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 import { PlayerState } from "../../../common/schema/PlayerState";
 import WorldConfig from "../../../common/consts/WorldConfig";
+import PlayerPhysics from "common/physics/PlayerPhysics";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;
@@ -74,14 +75,10 @@ export default class SingleHoopWorld {
   jumpTo(sessionId: string, x: number, y: number) {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
-    Body.setVelocity(player, {
-      x:
-        ((x - player.position.x) / WorldConfig.bounds.width) *
-        WorldConfig.player.maxVelocity,
-      y:
-        ((y - player.position.y) / WorldConfig.bounds.height) *
-        WorldConfig.player.maxVelocity,
-    });
+    Body.setVelocity(
+      player,
+      PlayerPhysics.getVelocity(player.position, { x, y })
+    );
   }
 
   update(dt: number) {
@@ -95,7 +92,6 @@ export default class SingleHoopWorld {
       playerState.velocity.y = player.velocity.y;
       playerState.angle = player.angle * (180 / Math.PI);
       playerState.angularVelocity = player.angularVelocity;
-      playerState.restitution = player.restitution;
     });
   }
 }
