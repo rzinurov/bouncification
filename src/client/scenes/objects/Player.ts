@@ -35,6 +35,8 @@ export default class Player extends Phaser.GameObjects.Container {
     this.physicsContainer.setCircle(Dimensions.playerSpriteSize / 2);
 
     this.scene.add.existing(this);
+
+    this.initState(state);
   }
 
   initState(state: PlayerState) {
@@ -45,9 +47,11 @@ export default class Player extends Phaser.GameObjects.Container {
   updateState(state: PlayerState) {
     if (this.checkVectorDiff(this, state.position)) {
       this.physicsContainer.setPosition(state.position.x, state.position.y);
+      this.physicsContainer.setAwake();
     }
     if (this.checkNumberDiff(this.angle, state.angle)) {
       this.physicsContainer.setAngle(state.angle);
+      this.physicsContainer.setAwake();
     }
     this.physicsContainer.setVelocity(state.velocity.x, state.velocity.y);
     this.physicsContainer.setAngularVelocity(state.angularVelocity);

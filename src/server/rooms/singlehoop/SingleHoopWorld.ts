@@ -1,4 +1,4 @@
-import { Bodies, Body, Engine, World } from "matter-js";
+import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
 import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 import { PlayerState } from "../../../common/schema/PlayerState";
 import Sprites from "../../../common/consts/Dimensions";
@@ -14,6 +14,7 @@ export default class SingleHoopWorld {
   constructor(state: SingleHoopState) {
     this.state = state;
     this.engine = Engine.create();
+    this.engine.enableSleeping = true;
 
     const size = Dimensions.worldBounds;
     const wallLeft = Bodies.rectangle(-15, size.height / 2, 30, size.height, {
@@ -60,6 +61,7 @@ export default class SingleHoopWorld {
 
   jumpTo(sessionId: string, x: number, y: number) {
     const player = this.players[sessionId];
+    Sleeping.set(player, false);
     Body.setVelocity(player, {
       x: ((x - player.position.x) / Dimensions.worldBounds.width) * 50,
       y: ((y - player.position.y) / Dimensions.worldBounds.height) * 50,
