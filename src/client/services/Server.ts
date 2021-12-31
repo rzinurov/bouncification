@@ -11,9 +11,9 @@ enum Events {
   Disconnected = "disconnected",
 }
 
-const SERVER_ADDRESS = `${
-  window.location.protocol === "https:" ? "wss:" : "ws:"
-}//${window.location.hostname}:2567`;
+const SERVER_ADDRESS = /localhost/.test(window.location.host)
+  ? "ws://localhost:2567"
+  : "wss://aexy8j.colyseus.de";
 console.log("Server address", SERVER_ADDRESS);
 
 export default class Server {
