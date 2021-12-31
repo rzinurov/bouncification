@@ -1,7 +1,7 @@
 {
-  "name": "jellify",
+  "name": "Bouncification",
   "version": "1.0.0",
-  "description": "Jellify",
+  "description": "Bouncification",
   "scripts": {
     "start": "parcel src/client/index.html -p 8000 --out-dir dist/client",
     "start-server": "ts-node-dev --project tsconfig.server.json --respawn -r tsconfig-paths/register src/index.ts",
@@ -13,9 +13,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rzinurov/jellify.git"
+    "url": "https://github.com/rzinurov/bouncification.git"
   },
-  "homepage": "https://github.com/rzinurov/jellify",
+  "homepage": "https://github.com/rzinurov/bouncification",
   "devDependencies": {
     "@colyseus/loadtest": "^0.14.4",
     "@colyseus/testing": "^0.14.21",

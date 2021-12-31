@@ -1,3 +1,3 @@
-# Jellify
+# Bouncification
 
-A multiplayer game about jellies
+A multiplayer game with a lot of bouncing balls

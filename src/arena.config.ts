@@ -9,7 +9,7 @@ import * as express from "express";
 import { LobbyRoom } from "./server/rooms/LobbyRoom";
 
 export default Arena({
-  getId: () => "Jellify",
+  getId: () => "Bouncification",
 
   initializeGameServer: (gameServer) => {
     gameServer.define(Rooms.Lobby, LobbyRoom);
