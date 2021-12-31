@@ -1,17 +1,17 @@
 import { Bodies, Body, Engine, World } from "matter-js";
-import { LobbyState } from "../../common/schema/LobbyState";
-import { PlayerState } from "../../common/schema/PlayerState";
-import Sprites from "../../common/consts/Dimensions";
-import Dimensions from "../../common/consts/Dimensions";
+import { SingleHoopState } from "../../../common/schema/SingleHoopState";
+import { PlayerState } from "../../../common/schema/PlayerState";
+import Sprites from "../../../common/consts/Dimensions";
+import Dimensions from "../../../common/consts/Dimensions";
 
-export default class LobbyWorld {
+export default class SingleHoopWorld {
   engine: Matter.Engine;
-  state: LobbyState;
+  state: SingleHoopState;
   players: {
     [name: string]: Body;
   } = {};
 
-  constructor(state: LobbyState) {
+  constructor(state: SingleHoopState) {
     this.state = state;
     this.engine = Engine.create();
 

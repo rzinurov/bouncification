@@ -1,6 +1,6 @@
 import * as Colyseus from "colyseus.js";
 import Rooms from "common/consts/Rooms";
-import type { LobbyState } from "common/schema/LobbyState";
+import type { SingleHoopState } from "common/schema/SingleHoopState";
 import type { PlayerState } from "common/schema/PlayerState";
 
 enum Events {
@@ -17,7 +17,7 @@ console.log("Server address", SERVER_ADDRESS);
 export default class Server {
   private client!: Colyseus.Client;
   private events: Phaser.Events.EventEmitter;
-  private room!: Colyseus.Room<LobbyState>;
+  private room!: Colyseus.Room<SingleHoopState>;
 
   constructor() {
     this.client = new Colyseus.Client(SERVER_ADDRESS);
@@ -25,9 +25,12 @@ export default class Server {
   }
 
   async join(name: string) {
-    this.room = await this.client.joinOrCreate<LobbyState>(Rooms.Lobby, {
-      name,
-    });
+    this.room = await this.client.joinOrCreate<SingleHoopState>(
+      Rooms.SingleHoop,
+      {
+        name,
+      }
+    );
 
     console.log("joined room", this.room);
 

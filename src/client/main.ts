@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import "regenerator-runtime/runtime";
 
-import LobbyScene from "./scenes/LobbyScene";
+import SingleHoopScene from "./scenes/SingleHoopScene";
 import BootstrapScene from "./scenes/BootstrapScene";
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -80,7 +80,7 @@ const config: Phaser.Types.Core.GameConfig = {
       // },
     },
   },
-  scene: [BootstrapScene, LobbyScene],
+  scene: [BootstrapScene, SingleHoopScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

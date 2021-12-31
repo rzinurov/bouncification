@@ -6,13 +6,13 @@ import * as express from "express";
 /**
  * Import your Room files
  */
-import { LobbyRoom } from "./server/rooms/LobbyRoom";
+import { SingleHoopRoom } from "./server/rooms/singlehoop/SingleHoopRoom";
 
 export default Arena({
   getId: () => "Bouncification",
 
   initializeGameServer: (gameServer) => {
-    gameServer.define(Rooms.Lobby, LobbyRoom);
+    gameServer.define(Rooms.SingleHoop, SingleHoopRoom);
   },
 
   initializeExpress: (app) => {

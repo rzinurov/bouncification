@@ -1,14 +1,14 @@
 import { Client, Room } from "colyseus";
-import { LobbyState } from "../../common/schema/LobbyState";
-import LobbyWorld from "./LobbyWorld";
+import { SingleHoopState as SingleHoopState } from "../../../common/schema/SingleHoopState";
+import SingleHoopWorld from "./SingleHoopWorld";
 
-export class LobbyRoom extends Room<LobbyState> {
-  world!: LobbyWorld;
+export class SingleHoopRoom extends Room<SingleHoopState> {
+  world!: SingleHoopWorld;
 
   onCreate(options: any) {
-    this.setState(new LobbyState());
+    this.setState(new SingleHoopState());
 
-    this.world = new LobbyWorld(this.state);
+    this.world = new SingleHoopWorld(this.state);
 
     this.world.addPlayer(
       "bot_1",

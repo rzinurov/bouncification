@@ -4,9 +4,9 @@ import Phaser from "phaser";
 import Dimensions from "common/consts/Dimensions";
 import Player from "./sprites/Player";
 
-export default class LobbyScene extends Phaser.Scene {
+export default class SingleHoopScene extends Phaser.Scene {
   constructor() {
-    super("lobby");
+    super("single-hoop");
   }
 
   preload() {
