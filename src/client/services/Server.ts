@@ -12,8 +12,8 @@ enum Events {
 }
 
 const SERVER_ADDRESS = `${
-  window.location.protocol === "https" ? "wss" : "ws"
-}://${window.location.hostname}:2567`;
+  window.location.protocol === "https:" ? "wss:" : "ws:"
+}//${window.location.hostname}:2567`;
 console.log("Server address", SERVER_ADDRESS);
 
 export default class Server {
