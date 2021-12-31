@@ -46,7 +46,7 @@ export default class SingleHoopWorld {
     const player = Bodies.circle(x, y, Sprites.playerSpriteSize / 2);
     Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
     Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
-    player.restitution = 0.2 + Math.random() * 0.4;
+    player.restitution = 0.75;
     World.add(this.engine.world, [player]);
     this.players[sessionId] = player;
     this.state.players.set(sessionId, new PlayerState(name, x, y));

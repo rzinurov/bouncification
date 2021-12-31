@@ -10,19 +10,11 @@ export default class SingleHoopScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("ball_blue", "assets/img/ball_blue.png");
-    this.load.image("ball_yellow", "assets/img/ball_yellow.png");
-    this.load.image("ball_red", "assets/img/ball_red.png");
-    this.load.image("bg", "assets/img/bg.jpg");
+    this.load.image("ball", "assets/img/ball.png");
   }
 
   async create(data: { server: Server }) {
     const { server } = data;
-
-    this.add.image(0, 0, "bg");
-    this.add.image(0, 626, "bg");
-    this.add.image(626, 0, "bg");
-    this.add.image(626, 626, "bg");
 
     try {
       await server.join(Names.randomName());
@@ -35,7 +27,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onJoined(({ sessionId, state }) => {
       console.log("you joined as", state.name);
 
-      const player = new Player(this, sessionId, state, "ball_blue");
+      const player = new Player(this, sessionId, state, "ball");
       players[sessionId] = player;
 
       this.input.on("pointerdown", (pointer: { x: any; y: any }) => {
@@ -46,7 +38,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onPlayerJoined(({ sessionId, state }) => {
       console.log(state.name, "joined");
 
-      const player = new Player(this, sessionId, state, "ball_yellow");
+      const player = new Player(this, sessionId, state, "ball");
       players[sessionId] = player;
     });
 
