@@ -27,7 +27,6 @@ export default class Player extends Phaser.GameObjects.Container {
         color: "#ffdd00",
       })
       .setOrigin(0.5) as Phaser.GameObjects.Text;
-    this.add(this.nameLabel);
 
     this.sessionId = sessionId;
     this.physicsContainer = scene.matter.add.gameObject(
@@ -36,17 +35,38 @@ export default class Player extends Phaser.GameObjects.Container {
     this.physicsContainer.setCircle(Dimensions.playerSpriteSize / 2);
 
     this.scene.add.existing(this);
+  }
 
+  initState(state: PlayerState) {
+    this.physicsContainer.setBounce(state.restitution);
     this.updateState(state);
   }
 
   updateState(state: PlayerState) {
-    this.setPosition(state.position.x, state.position.y);
-    this.physicsContainer.setAngle(state.angle);
-    this.setAngle(0);
-    this.image.setAngle(state.angle);
+    if (this.checkVectorDiff(this, state.position)) {
+      this.physicsContainer.setPosition(state.position.x, state.position.y);
+    }
+    if (this.checkNumberDiff(this.angle, state.angle)) {
+      this.physicsContainer.setAngle(state.angle);
+    }
     this.physicsContainer.setVelocity(state.velocity.x, state.velocity.y);
     this.physicsContainer.setAngularVelocity(state.angularVelocity);
-    this.physicsContainer.setBounce(state.restitution);
+  }
+
+  checkVectorDiff(a: { x: number; y: number }, b: { x: number; y: number }) {
+    return this.checkNumberDiff(a.x, b.x) || this.checkNumberDiff(a.y, b.y);
+  }
+
+  checkNumberDiff(a: number, b: number) {
+    return Math.abs(a - b) >= 0.5;
+  }
+
+  preUpdate() {
+    this.nameLabel.setPosition(this.x, this.y - this.height * 0.75);
+  }
+
+  destroy() {
+    this.nameLabel.destroy();
+    super.destroy();
   }
 }
