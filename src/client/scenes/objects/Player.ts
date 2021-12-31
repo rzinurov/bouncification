@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { PlayerState } from "common/schema/PlayerState";
-import Dimensions from "common/consts/Dimensions";
+import WorldConfig from "common/consts/WorldConfig";
 
 export default class Player extends Phaser.GameObjects.Container {
   physicsContainer: Phaser.Physics.Matter.Sprite;
@@ -15,15 +15,15 @@ export default class Player extends Phaser.GameObjects.Container {
     imageName: string
   ) {
     super(scene, state.position.x, state.position.y);
-    this.width = Dimensions.playerSpriteSize;
-    this.height = Dimensions.playerSpriteSize;
+    this.width = WorldConfig.player.spriteSize;
+    this.height = WorldConfig.player.spriteSize;
 
     this.image = scene.add.image(0, 0, imageName);
     this.add(this.image);
 
     this.nameLabel = this.scene.add
       .text(0, -this.height * 0.9, state.name, {
-        font: "16px Arial",
+        font: `${WorldConfig.player.nameLabelSize}px Arial`,
         color: "#ffdd00",
       })
       .setOrigin(0.5) as Phaser.GameObjects.Text;
@@ -32,7 +32,7 @@ export default class Player extends Phaser.GameObjects.Container {
     this.physicsContainer = scene.matter.add.gameObject(
       this
     ) as Phaser.Physics.Matter.Sprite;
-    this.physicsContainer.setCircle(Dimensions.playerSpriteSize / 2);
+    this.physicsContainer.setCircle(this.width / 2);
 
     this.scene.add.existing(this);
 

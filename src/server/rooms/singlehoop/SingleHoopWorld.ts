@@ -1,8 +1,7 @@
 import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
 import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 import { PlayerState } from "../../../common/schema/PlayerState";
-import Sprites from "../../../common/consts/Dimensions";
-import Dimensions from "../../../common/consts/Dimensions";
+import WorldConfig from "../../../common/consts/WorldConfig";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;
@@ -16,25 +15,38 @@ export default class SingleHoopWorld {
     this.engine = Engine.create();
     this.engine.enableSleeping = true;
 
-    const size = Dimensions.worldBounds;
-    const wallLeft = Bodies.rectangle(-15, size.height / 2, 30, size.height, {
-      isStatic: true,
-    });
+    const worldBounds = WorldConfig.bounds;
+    const wallThickness = 300;
+    const wallLeft = Bodies.rectangle(
+      -wallThickness / 2,
+      worldBounds.height / 2,
+      wallThickness,
+      worldBounds.height,
+      {
+        isStatic: true,
+      }
+    );
     const wallRight = Bodies.rectangle(
-      size.width + 15,
-      size.height / 2,
-      30,
-      size.height,
+      worldBounds.width + wallThickness / 2,
+      worldBounds.height / 2,
+      wallThickness,
+      worldBounds.height,
       { isStatic: true }
     );
-    const wallTop = Bodies.rectangle(size.width / 2, -15, size.width, 30, {
-      isStatic: true,
-    });
+    const wallTop = Bodies.rectangle(
+      worldBounds.width / 2,
+      -wallThickness / 2,
+      worldBounds.width,
+      wallThickness,
+      {
+        isStatic: true,
+      }
+    );
     const wallBottom = Bodies.rectangle(
-      size.width / 2,
-      size.height + 15,
-      size.width,
-      30,
+      worldBounds.width / 2,
+      worldBounds.height + wallThickness / 2,
+      worldBounds.width,
+      wallThickness,
       { isStatic: true }
     );
 
@@ -44,7 +56,7 @@ export default class SingleHoopWorld {
   }
 
   addPlayer(sessionId: string, name: string, x: number, y: number) {
-    const player = Bodies.circle(x, y, Sprites.playerSpriteSize / 2);
+    const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
     Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
     Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
     player.restitution = 0.75;
@@ -63,8 +75,12 @@ export default class SingleHoopWorld {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
     Body.setVelocity(player, {
-      x: ((x - player.position.x) / Dimensions.worldBounds.width) * 50,
-      y: ((y - player.position.y) / Dimensions.worldBounds.height) * 50,
+      x:
+        ((x - player.position.x) / WorldConfig.bounds.width) *
+        WorldConfig.player.maxVelocity,
+      y:
+        ((y - player.position.y) / WorldConfig.bounds.height) *
+        WorldConfig.player.maxVelocity,
     });
   }
 

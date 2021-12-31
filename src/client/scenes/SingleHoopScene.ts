@@ -1,7 +1,7 @@
 import Server from "client/services/Server";
 import Names from "client/utils/Names";
 import Phaser from "phaser";
-import Dimensions from "common/consts/Dimensions";
+import WorldConfig from "common/consts/WorldConfig";
 import Player from "./objects/Player";
 
 export default class SingleHoopScene extends Phaser.Scene {
@@ -57,7 +57,7 @@ export default class SingleHoopScene extends Phaser.Scene {
       window.location.reload();
     });
 
-    const { width, height } = Dimensions.worldBounds;
+    const { width, height } = WorldConfig.bounds;
     this.matter.world.setBounds(0, 0, width, height);
   }
 }

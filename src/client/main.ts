@@ -6,8 +6,8 @@ import BootstrapScene from "./scenes/BootstrapScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 1280,
+  height: 1280,
   physics: {
     default: "matter",
     matter: {
