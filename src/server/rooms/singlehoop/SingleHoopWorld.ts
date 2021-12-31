@@ -71,10 +71,10 @@ export default class SingleHoopWorld {
 
     Object.entries(this.players).forEach(([sessionId, player]) => {
       const playerState = this.state.players.get(sessionId) as PlayerState;
-      playerState.x = player.position.x;
-      playerState.y = player.position.y;
-      playerState.velocityX = player.velocity.x;
-      playerState.velocityY = player.velocity.y;
+      playerState.position.x = player.position.x;
+      playerState.position.y = player.position.y;
+      playerState.velocity.x = player.velocity.x;
+      playerState.velocity.y = player.velocity.y;
       playerState.angle = player.angle * (180 / Math.PI);
       playerState.angularVelocity = player.angularVelocity;
       playerState.restitution = player.restitution;

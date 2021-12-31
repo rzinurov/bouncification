@@ -2,7 +2,7 @@ import Server from "client/services/Server";
 import Names from "client/utils/Names";
 import Phaser from "phaser";
 import Dimensions from "common/consts/Dimensions";
-import Player from "./sprites/Player";
+import Player from "./objects/Player";
 
 export default class SingleHoopScene extends Phaser.Scene {
   constructor() {

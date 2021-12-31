@@ -14,7 +14,7 @@ export default class Player extends Phaser.GameObjects.Container {
     state: PlayerState,
     imageName: string
   ) {
-    super(scene, state.x, state.y);
+    super(scene, state.position.x, state.position.y);
     this.width = Dimensions.playerSpriteSize;
     this.height = Dimensions.playerSpriteSize;
 
@@ -41,11 +41,11 @@ export default class Player extends Phaser.GameObjects.Container {
   }
 
   updateState(state: PlayerState) {
-    this.setPosition(state.x, state.y);
+    this.setPosition(state.position.x, state.position.y);
     this.physicsContainer.setAngle(state.angle);
     this.setAngle(0);
     this.image.setAngle(state.angle);
-    this.physicsContainer.setVelocity(state.velocityX, state.velocityY);
+    this.physicsContainer.setVelocity(state.velocity.x, state.velocity.y);
     this.physicsContainer.setAngularVelocity(state.angularVelocity);
     this.physicsContainer.setBounce(state.restitution);
   }
