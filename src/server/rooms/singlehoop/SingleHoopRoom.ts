@@ -22,6 +22,8 @@ export class SingleHoopRoom extends Room<SingleHoopState> {
       this.world.jumpTo(client.sessionId, message.x, message.y);
     });
 
+    this.maxClients = 10;
+
     this.dispatcher.dispatch(new OnCreate(this.world));
   }
 

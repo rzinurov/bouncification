@@ -23,7 +23,7 @@ export default class Headerboard extends Phaser.GameObjects.Container {
 
     this.namesLabel = this.scene.add
       .text(8, 8, "Loading..", {
-        font: `16px Arial`,
+        font: `24px Arial`,
         color: "#ffdd00",
       })
       .setOrigin(0, 0) as Phaser.GameObjects.Text;
@@ -31,7 +31,7 @@ export default class Headerboard extends Phaser.GameObjects.Container {
 
     this.scoresLabel = this.scene.add
       .text(248, 8, "", {
-        font: `16px Arial`,
+        font: `24px Arial`,
         color: "#ffdd00",
         align: "right",
       })
@@ -43,12 +43,14 @@ export default class Headerboard extends Phaser.GameObjects.Container {
 
   update(sessionId: string, { name, score }: LeaderboardRowState) {
     this.scores[sessionId] = { name, score };
-    const scores = Object.values(this.scores).sort((s1: any, s2: any) => {
-      if (s1.score === s2.score) {
-        return s2.name > s1.name ? -1 : 1;
-      }
-      return s2.score - s1.score;
-    });
+    const scores = Object.values(this.scores)
+      .sort((s1: any, s2: any) => {
+        if (s1.score === s2.score) {
+          return s2.name > s1.name ? -1 : 1;
+        }
+        return s2.score - s1.score;
+      })
+      .slice(0, 10);
     this.namesLabel.setText(scores.map((s: any) => s.name).join("\n"));
     this.scoresLabel.setText(scores.map((s: any) => s.score).join("\n"));
   }

@@ -31,7 +31,7 @@ export default class SingleHoopScene extends Phaser.Scene {
       this.cameras.main.width - 272,
       16,
       256,
-      256
+      272
     );
 
     const players: { [name: string]: Player } = {};
