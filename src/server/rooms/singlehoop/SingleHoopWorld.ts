@@ -1,3 +1,4 @@
+import Player from "client/scenes/objects/Player";
 import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";
@@ -79,9 +80,9 @@ export default class SingleHoopWorld {
   addPlayer(sessionId: string, name: string, x: number, y: number) {
     const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
     player.label = sessionId;
+    player.restitution = WorldConfig.player.restitution;
     Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
     Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
-    player.restitution = 0.75;
     World.add(this.engine.world, [player]);
     this.players[sessionId] = player;
     this.state.players.set(sessionId, new PlayerState(name, x, y));
@@ -95,10 +96,10 @@ export default class SingleHoopWorld {
     this.state.players.delete(sessionId);
   }
 
-  jump(sessionId: string, vector: { x: number; y: number }) {
+  jump(sessionId: string, velocity: { x: number; y: number }) {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
-    Body.setVelocity(player, PlayerPhysics.getVelocity(vector));
+    Body.setVelocity(player, PlayerPhysics.limitVelocity(velocity));
   }
 
   update(dt: number) {

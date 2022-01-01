@@ -1,3 +1,4 @@
+import PlayerPhysics from "common/physics/PlayerPhysics";
 import Phaser from "phaser";
 import Player from "./Player";
 
@@ -6,78 +7,148 @@ export enum TraceEvents {
 }
 
 export default class Trace extends Phaser.GameObjects.Container {
-  downCoordinates?: { x: number; y: number };
-  line: Phaser.GameObjects.Line;
+  anchor: Phaser.GameObjects.Arc;
+  cursorLine: Phaser.GameObjects.Line;
+  aimGraphics: Phaser.GameObjects.Graphics;
+  aimCurve: Phaser.Curves.CubicBezier;
   player: Player;
+  lastPointerPosition?: { x: number; y: number };
 
   constructor(scene: Phaser.Scene, player: Player) {
     super(scene, 100, 100);
     this.player = player;
-
-    this.line = this.scene.add
-      .line(0, 0, 0, 0, 0, 0, 0xffffff, 0.5)
-      .setLineWidth(4)
-      .setOrigin(0, 0)
-      .setVisible(false);
+    this.mousePointer = this.scene.input.activePointer;
 
     scene.input.on("pointerdown", (pointer: { x: any; y: any }) => {
-      // server.jumpTo(pointer);
-      // player.jumpTo(pointer);
       this.onPointerDown(pointer);
     });
 
     scene.input.on("pointerup", (pointer: { x: any; y: any }) => {
-      // server.jumpTo(pointer);
-      // player.jumpTo(pointer);
       this.onPointerUp(pointer);
     });
+
+    scene.input.on(
+      "pointermove",
+      (pointer: { x: any; y: any; isDown: boolean }) => {
+        this.onPointerMove(pointer);
+      }
+    );
+
+    this.anchor = this.scene.add.circle(0, 0, 16, 0xffffff, 0.25);
+    this.add(this.anchor);
+
+    this.cursorLine = this.scene.add
+      .line(0, 0, 0, 0, 0, 0, 0xffffff, 0.25)
+      .setOrigin(0, 0);
+    this.cursorLine.setLineWidth(4);
+    this.add(this.cursorLine);
+
+    this.cursorLine.setPosition(50, 50);
+    this.cursorLine.setTo(100, 100);
+
+    this.aimGraphics = this.scene.add.graphics();
+
+    this.aimCurve = new Phaser.Curves.CubicBezier(
+      new Phaser.Math.Vector2(0, 0),
+      new Phaser.Math.Vector2(0, 0),
+      new Phaser.Math.Vector2(0, 0),
+      new Phaser.Math.Vector2(0, 0)
+    );
+
+    this.setVisible(false);
 
     this.scene.add.existing(this);
   }
 
   preUpdate() {
-    if (this.downCoordinates) {
-      const vector = this.getDisplayVector();
-      this.line.setPosition(this.player.x, this.player.y);
-      this.line.setTo(0, 0, vector.x, vector.y);
+    if (!this.visible || !this.lastPointerPosition) {
+      return;
     }
+
+    this.cursorLine
+      .setPosition(0, 0)
+      .setTo(
+        this.lastPointerPosition.x - this.x,
+        this.lastPointerPosition.y - this.y
+      );
+
+    const vector = this.getVelocity(this.lastPointerPosition);
+
+    const aimLength = 15;
+
+    const p1 = this.getTracePosition(vector, aimLength * 0.25);
+    const p2 = this.getTracePosition(vector, aimLength * 0.75);
+    const p3 = this.getTracePosition(vector, aimLength);
+
+    this.aimGraphics.setPosition(this.player.x, this.player.y);
+    this.aimCurve.p0.x = 0;
+    this.aimCurve.p0.y = 0;
+    this.aimCurve.p1.x = p1.x;
+    this.aimCurve.p1.y = p1.y;
+    this.aimCurve.p2.x = p2.x;
+    this.aimCurve.p2.y = p2.y;
+    this.aimCurve.p3.x = p3.x;
+    this.aimCurve.p3.y = p3.y;
+
+    const points = this.aimCurve.getPoints(16);
+    this.aimGraphics.clear();
+    for (let i = 0; i < points.length; i++) {
+      this.aimGraphics.fillStyle(0xffffff, 0.8 - i * 0.05);
+      this.aimGraphics.fillCircle(points[i].x, points[i].y, 8);
+    }
+  }
+
+  private onPointerMove(pointer: { x: number; y: number; isDown: boolean }) {
+    {
+      if (!pointer.isDown) {
+        return;
+      }
+      this.lastPointerPosition = pointer;
+    }
+  }
+
+  private getTracePosition(vector: { x: number; y: number }, t: number) {
+    const velocityMultiplier = 6.5;
+    const airFriction = 0.25 * Math.pow(t, 2);
+    const g = 10;
+    const vx = vector.x * velocityMultiplier;
+    const vy = vector.y * velocityMultiplier;
+    const angle = Math.atan2(vy, vx);
+    return {
+      x: Math.sign(vx) * (vx * t * Math.cos(angle) - airFriction),
+      y:
+        Math.sign(vy) * (vy * t * Math.sin(angle) - airFriction) +
+        (g * Math.pow(t, 2)) / 2,
+    };
   }
 
   destroy() {
     super.destroy();
-    this.line.destroy();
+    this.aimGraphics.destroy();
   }
 
   private onPointerDown(pointer: { x: number; y: number }) {
-    this.downCoordinates = { x: pointer.x, y: pointer.y };
-    this.x = pointer.x;
-    this.y = pointer.y;
-    this.line.setVisible(true);
+    this.setPosition(pointer.x, pointer.y).setVisible(true);
+    this.cursorLine.setPosition(0, 0).setTo(0, 0);
+    this.aimGraphics.clear();
+    this.aimGraphics.setVisible(true);
   }
 
   private onPointerUp(pointer: { x: number; y: number }) {
-    this.line.setVisible(false);
-    const vector = this.getVector();
-    this.emit(TraceEvents.Shoot, vector);
-    this.downCoordinates = undefined;
+    this.setVisible(false);
+    this.cursorLine.setPosition(0, 0).setTo(0, 0);
+    this.aimGraphics.clear();
+    this.aimGraphics.setVisible(false);
+
+    const velocity = this.getVelocity(pointer);
+    this.emit(TraceEvents.Shoot, velocity);
   }
 
-  private getVector() {
-    if (!this.downCoordinates) {
-      return { x: 0, y: 0 };
-    }
-    const mousePointer = this.scene.input.mousePointer;
+  private getVelocity(pointer: { x: number; y: number }) {
+    const multiplier = 0.2;
     return {
-      x: mousePointer.x - this.downCoordinates.x,
-      y: mousePointer.y - this.downCoordinates.y,
-    };
-  }
-
-  private getDisplayVector() {
-    const vector = this.getVector();
-    return {
-      x: vector.x * 2,
-      y: vector.y * 2,
+      x: (pointer.x - this.x) * multiplier,
+      y: (pointer.y - this.y) * multiplier,
     };
   }
 }

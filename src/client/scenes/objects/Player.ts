@@ -24,8 +24,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.updateState(state);
   }
 
-  jump(vector: { x: number; y: number }) {
-    const velocity = PlayerPhysics.getVelocity(vector);
+  jump(velocity: { x: number; y: number }) {
     this.setVelocity(velocity.x, velocity.y);
   }
 

@@ -42,9 +42,9 @@ export default class SingleHoopScene extends Phaser.Scene {
       players[sessionId] = player;
 
       this.trace = new Trace(this, player);
-      this.trace.on(TraceEvents.Shoot, (pointer: { x: number; y: number }) => {
-        server.jump(pointer);
-        player.jump(pointer);
+      this.trace.on(TraceEvents.Shoot, (velocity: { x: number; y: number }) => {
+        server.jump(velocity);
+        player.jump(velocity);
       });
 
       this.leaderboard = new Leaderboard(
