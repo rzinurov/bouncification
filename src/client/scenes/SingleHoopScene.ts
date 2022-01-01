@@ -5,6 +5,7 @@ import WorldConfig from "common/consts/WorldConfig";
 import Player from "./objects/Player";
 import { SingleHoopState } from "common/schema/SingleHoopState";
 import Hoop from "./objects/Hoop";
+import Leaderboard from "./ui/Leaderboard";
 
 export default class SingleHoopScene extends Phaser.Scene {
   constructor() {
@@ -25,6 +26,14 @@ export default class SingleHoopScene extends Phaser.Scene {
       return;
     }
 
+    const leaderboard = new Leaderboard(
+      this,
+      this.cameras.main.width - 272,
+      16,
+      256,
+      256
+    );
+
     const players: { [name: string]: Player } = {};
 
     server.onInitialState((state) => {
@@ -34,7 +43,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onJoined(({ sessionId, state }) => {
       console.log("you joined as", state.name);
 
-      const player = new Player(this, state, "ball");
+      const player = new Player(this, state, true);
       players[sessionId] = player;
 
       this.input.on("pointerdown", (pointer: { x: any; y: any }) => {
@@ -46,7 +55,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onPlayerJoined(({ sessionId, state }) => {
       console.log(state.name, "joined");
 
-      const player = new Player(this, state, "ball");
+      const player = new Player(this, state, false);
       players[sessionId] = player;
     });
 
@@ -59,6 +68,10 @@ export default class SingleHoopScene extends Phaser.Scene {
 
     server.onPlayerStateChanged(({ sessionId, state }) => {
       players[sessionId].updateState(state);
+    });
+
+    server.onLeaderboardStateChanged(({ sessionId, state }) => {
+      leaderboard.update(sessionId, state);
     });
 
     server.onDisconnected(() => {

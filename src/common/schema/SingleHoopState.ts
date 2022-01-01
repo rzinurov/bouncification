@@ -1,11 +1,15 @@
 import { Schema, type, MapSchema } from "@colyseus/schema";
 import { HoopState } from "./HoopState";
+import { LeaderboardRowState } from "./LeaderboardRowState";
 import { PlayerState } from "./PlayerState";
 import { PositionState } from "./Primitives";
 
 export class SingleHoopState extends Schema {
   @type({ map: PlayerState })
   players = new MapSchema<PlayerState>();
+
+  @type({ map: LeaderboardRowState })
+  leaderboard = new MapSchema<LeaderboardRowState>();
 
   @type(HoopState)
   hoop = new HoopState(

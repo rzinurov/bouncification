@@ -2,6 +2,7 @@ import * as Colyseus from "colyseus.js";
 import Rooms from "common/consts/Rooms";
 import type { SingleHoopState } from "common/schema/SingleHoopState";
 import type { PlayerState } from "common/schema/PlayerState";
+import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 
 enum Events {
   InitialState = "initial-state",
@@ -9,6 +10,7 @@ enum Events {
   PlayerJoined = "player-joined",
   PlayerLeft = "player-left",
   PlayerStateChanged = "player-state-changed",
+  LeaderboardChanged = "leaderboard-changed",
   Disconnected = "disconnected",
 }
 
@@ -72,6 +74,26 @@ export default class Server {
       this.events.emit(Events.PlayerLeft, { sessionId, state: playerState });
     };
 
+    this.room.state.leaderboard.onAdd = (
+      leaderboardState: LeaderboardRowState,
+      sessionId: string
+    ) => {
+      this.events.emit(Events.LeaderboardChanged, {
+        sessionId,
+        state: leaderboardState,
+      });
+
+      leaderboardState.onChange = (changes: [any]) => {
+        changes.forEach((change) => {
+          leaderboardState[change.field] = change.value;
+        });
+        this.events.emit(Events.LeaderboardChanged, {
+          sessionId,
+          state: leaderboardState,
+        });
+      };
+    };
+
     this.room.onLeave((code) => {
       this.events.emit(Events.Disconnected);
     });
@@ -111,6 +133,13 @@ export default class Server {
     context?: any
   ) {
     this.events.on(Events.PlayerStateChanged, cb, context);
+  }
+
+  onLeaderboardStateChanged(
+    cb: ({ sessionId: string, state: LeaderboardRowState }) => void,
+    context?: any
+  ) {
+    this.events.on(Events.LeaderboardChanged, cb, context);
   }
 
   onDisconnected(cb: () => void, context?: any) {

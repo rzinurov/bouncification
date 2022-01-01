@@ -6,8 +6,8 @@ import PlayerPhysics from "common/physics/PlayerPhysics";
 export default class Player extends Phaser.Physics.Matter.Image {
   nameLabel: Phaser.GameObjects.Text;
 
-  constructor(scene: Phaser.Scene, state: PlayerState, imageName: string) {
-    super(scene.matter.world, state.position.x, state.position.y, imageName);
+  constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
+    super(scene.matter.world, state.position.x, state.position.y, "ball");
 
     this.setCircle(WorldConfig.player.spriteSize / 2);
     this.setBounce(WorldConfig.player.restitution);
@@ -15,7 +15,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.nameLabel = this.scene.add
       .text(0, 0, state.name, {
         font: `32px Arial`,
-        color: "#ffdd00",
+        color: isYou ? "#00dd00" : "#ffdd00",
       })
       .setOrigin(0.5) as Phaser.GameObjects.Text;
 

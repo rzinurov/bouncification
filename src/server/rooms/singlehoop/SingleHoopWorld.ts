@@ -1,9 +1,10 @@
-import { Bodies, Body, Composite, Engine, Sleeping, World } from "matter-js";
-import { SingleHoopState } from "../../../common/schema/SingleHoopState";
-import { PlayerState } from "../../../common/schema/PlayerState";
+import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";
+import { LeaderboardRowState } from "../../../common/schema/LeaderboardRowState";
+import { PlayerState } from "../../../common/schema/PlayerState";
 import { PositionState } from "../../../common/schema/Primitives";
+import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;
@@ -97,6 +98,19 @@ export default class SingleHoopWorld {
     World.add(this.engine.world, [player]);
     this.players[sessionId] = player;
     this.state.players.set(sessionId, new PlayerState(name, x, y));
+
+    this.createLeaderboardRow(sessionId, name);
+  }
+
+  private createLeaderboardRow(sessionId: string, name: string) {
+    const leaderboardRow = new LeaderboardRowState();
+    leaderboardRow.name = name;
+    leaderboardRow.score = 0;
+    this.state.leaderboard.set(sessionId, leaderboardRow);
+  }
+
+  private increaseScore(sessionId: string, delta: number) {
+    this.state.leaderboard.get(sessionId)!.score += delta;
   }
 
   removePlayer(sessionId: string) {
@@ -112,6 +126,7 @@ export default class SingleHoopWorld {
       player,
       PlayerPhysics.getVelocity(player.position, { x, y })
     );
+    this.increaseScore(sessionId, 1);
   }
 
   update(dt: number) {
