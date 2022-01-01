@@ -1,4 +1,4 @@
-import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
+import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";
 import { LeaderboardRowState } from "../../../common/schema/LeaderboardRowState";
@@ -18,6 +18,124 @@ export default class SingleHoopWorld {
     this.engine = Engine.create();
     this.engine.enableSleeping = true;
 
+    this.addWorldBounds();
+
+    this.engine.gravity.y = 1;
+  }
+
+  addHoop(x: number, y: number) {
+    const backBoardOffset = new PositionState(-16, 0);
+    const edgeOffset = new PositionState(160, 64);
+
+    const backboardConfig = WorldConfig.hoop.backboard;
+    const backboard = Bodies.rectangle(
+      x + backBoardOffset.x,
+      y + backBoardOffset.y,
+      backboardConfig.width,
+      backboardConfig.height
+    );
+
+    const edgeConfig = WorldConfig.hoop.edge;
+    const edge = Bodies.circle(
+      x + edgeOffset.x,
+      y + edgeOffset.y,
+      edgeConfig.size / 2
+    );
+
+    const scoreSensor = Bodies.circle(
+      x + edgeOffset.x / 2,
+      y + edgeOffset.y + 32,
+      8,
+      {
+        isStatic: true,
+        isSensor: true,
+      }
+    );
+    scoreSensor.label = "score_sensor";
+
+    Events.on(this.engine, "collisionStart", (event) => {
+      event.pairs.forEach((pair) => {
+        if (pair.bodyA.label === scoreSensor.label) {
+          this.onScoreSensorHit(pair.bodyB);
+        } else if (pair.bodyB.label === scoreSensor.label) {
+          this.onScoreSensorHit(pair.bodyA);
+        }
+      });
+    });
+
+    const hoop = Body.create({
+      parts: [backboard, edge, scoreSensor],
+      isStatic: true,
+    });
+    Body.setPosition(hoop, { x, y });
+
+    World.add(this.engine.world, [hoop]);
+
+    this.state.hoop.position = new PositionState(x, y);
+    this.state.hoop.backboardOffset = backBoardOffset;
+    this.state.hoop.edgeOffset = edgeOffset;
+  }
+
+  addPlayer(sessionId: string, name: string, x: number, y: number) {
+    const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
+    player.label = sessionId;
+    Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
+    Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
+    player.restitution = 0.75;
+    World.add(this.engine.world, [player]);
+    this.players[sessionId] = player;
+    this.state.players.set(sessionId, new PlayerState(name, x, y));
+
+    this.createLeaderboardRow(sessionId, name);
+  }
+
+  removePlayer(sessionId: string) {
+    World.remove(this.engine.world, this.players[sessionId]);
+    delete this.players[sessionId];
+    this.state.players.delete(sessionId);
+  }
+
+  jumpTo(sessionId: string, x: number, y: number) {
+    const player = this.players[sessionId];
+    Sleeping.set(player, false);
+    Body.setVelocity(
+      player,
+      PlayerPhysics.getVelocity(player.position, { x, y })
+    );
+  }
+
+  update(dt: number) {
+    Engine.update(this.engine, dt);
+
+    Object.entries(this.players).forEach(([sessionId, player]) => {
+      const playerState = this.state.players.get(sessionId) as PlayerState;
+      playerState.position.x = player.position.x;
+      playerState.position.y = player.position.y;
+      playerState.velocity.x = player.velocity.x;
+      playerState.velocity.y = player.velocity.y;
+      playerState.angle = player.angle * (180 / Math.PI);
+      playerState.angularVelocity = player.angularVelocity;
+    });
+  }
+
+  private onScoreSensorHit(body: Body) {
+    if (this.players[body.label]) {
+      this.increaseScore(body.label, 1);
+    }
+  }
+
+  private createLeaderboardRow(sessionId: string, name: string) {
+    const leaderboardRow = new LeaderboardRowState();
+    leaderboardRow.name = name;
+    leaderboardRow.score = 0;
+    this.state.leaderboard.set(sessionId, leaderboardRow);
+  }
+
+  private increaseScore(sessionId: string, delta: number) {
+    this.state.leaderboard.get(sessionId)!.score += delta;
+  }
+
+  private addWorldBounds() {
     const worldBounds = WorldConfig.bounds;
     const wallThickness = 300;
     const wallLeft = Bodies.rectangle(
@@ -54,92 +172,5 @@ export default class SingleHoopWorld {
     );
 
     World.add(this.engine.world, [wallLeft, wallRight, wallTop, wallBottom]);
-
-    this.engine.world.gravity.y = 1;
-  }
-
-  addHoop(x: number, y: number) {
-    const backBoardOffset = new PositionState(-16, 0);
-    const edgeOffset = new PositionState(160, 64);
-
-    const backboardConfig = WorldConfig.hoop.backboard;
-    const backboard = Bodies.rectangle(
-      x + backBoardOffset.x,
-      y + backBoardOffset.y,
-      backboardConfig.width,
-      backboardConfig.height
-    );
-
-    const edgeConfig = WorldConfig.hoop.edge;
-    const edge = Bodies.circle(
-      x + edgeOffset.x,
-      y + edgeOffset.y,
-      edgeConfig.size / 2
-    );
-
-    const hoop = Body.create({
-      parts: [backboard, edge],
-      isStatic: true,
-    });
-    Body.setPosition(hoop, { x, y });
-
-    World.add(this.engine.world, [hoop]);
-
-    this.state.hoop.position = new PositionState(x, y);
-    this.state.hoop.backboardOffset = backBoardOffset;
-    this.state.hoop.edgeOffset = edgeOffset;
-  }
-
-  addPlayer(sessionId: string, name: string, x: number, y: number) {
-    const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
-    Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
-    Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
-    player.restitution = 0.75;
-    World.add(this.engine.world, [player]);
-    this.players[sessionId] = player;
-    this.state.players.set(sessionId, new PlayerState(name, x, y));
-
-    this.createLeaderboardRow(sessionId, name);
-  }
-
-  private createLeaderboardRow(sessionId: string, name: string) {
-    const leaderboardRow = new LeaderboardRowState();
-    leaderboardRow.name = name;
-    leaderboardRow.score = 0;
-    this.state.leaderboard.set(sessionId, leaderboardRow);
-  }
-
-  private increaseScore(sessionId: string, delta: number) {
-    this.state.leaderboard.get(sessionId)!.score += delta;
-  }
-
-  removePlayer(sessionId: string) {
-    World.remove(this.engine.world, this.players[sessionId]);
-    delete this.players[sessionId];
-    this.state.players.delete(sessionId);
-  }
-
-  jumpTo(sessionId: string, x: number, y: number) {
-    const player = this.players[sessionId];
-    Sleeping.set(player, false);
-    Body.setVelocity(
-      player,
-      PlayerPhysics.getVelocity(player.position, { x, y })
-    );
-    this.increaseScore(sessionId, 1);
-  }
-
-  update(dt: number) {
-    Engine.update(this.engine, dt);
-
-    Object.entries(this.players).forEach(([sessionId, player]) => {
-      const playerState = this.state.players.get(sessionId) as PlayerState;
-      playerState.position.x = player.position.x;
-      playerState.position.y = player.position.y;
-      playerState.velocity.x = player.velocity.x;
-      playerState.velocity.y = player.velocity.y;
-      playerState.angle = player.angle * (180 / Math.PI);
-      playerState.angularVelocity = player.angularVelocity;
-    });
   }
 }

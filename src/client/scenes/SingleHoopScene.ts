@@ -1,13 +1,14 @@
 import Server from "client/services/Server";
 import Names from "client/utils/Names";
-import Phaser from "phaser";
 import WorldConfig from "common/consts/WorldConfig";
-import Player from "./objects/Player";
-import { SingleHoopState } from "common/schema/SingleHoopState";
+import Phaser from "phaser";
 import Hoop from "./objects/Hoop";
+import Player from "./objects/Player";
 import Leaderboard from "./ui/Leaderboard";
 
 export default class SingleHoopScene extends Phaser.Scene {
+  leaderboard?: Leaderboard;
+
   constructor() {
     super("single-hoop");
   }
@@ -26,14 +27,6 @@ export default class SingleHoopScene extends Phaser.Scene {
       return;
     }
 
-    const leaderboard = new Leaderboard(
-      this,
-      this.cameras.main.width - 272,
-      16,
-      256,
-      272
-    );
-
     const players: { [name: string]: Player } = {};
 
     server.onInitialState((state) => {
@@ -45,6 +38,16 @@ export default class SingleHoopScene extends Phaser.Scene {
 
       const player = new Player(this, state, true);
       players[sessionId] = player;
+
+      this.leaderboard = new Leaderboard(
+        this,
+        this.cameras.main.width - 320 - 16,
+        16,
+        320,
+        272,
+        10,
+        sessionId
+      );
 
       this.input.on("pointerdown", (pointer: { x: any; y: any }) => {
         server.jumpTo(pointer);
@@ -71,7 +74,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     });
 
     server.onLeaderboardStateChanged(({ sessionId, state }) => {
-      leaderboard.update(sessionId, state);
+      this.leaderboard?.update(sessionId, state);
     });
 
     server.onDisconnected(() => {
