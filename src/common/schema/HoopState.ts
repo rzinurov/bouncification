@@ -1,12 +1,24 @@
 import { Schema, type } from "@colyseus/schema";
-import { VectorState } from "./Primitives";
+import { PositionState } from "./Primitives";
 
 export class HoopState extends Schema {
-  @type(VectorState)
-  position: VectorState;
+  @type(PositionState)
+  position: PositionState;
 
-  constructor(x: number, y: number) {
+  @type(PositionState)
+  backboardOffset: PositionState;
+
+  @type(PositionState)
+  edgeOffset: PositionState;
+
+  constructor(
+    position: PositionState,
+    backboardPosition: PositionState,
+    edgePosition: PositionState
+  ) {
     super();
-    this.position = new VectorState(x, y);
+    this.position = position;
+    this.backboardOffset = backboardPosition;
+    this.edgeOffset = edgePosition;
   }
 }

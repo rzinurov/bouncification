@@ -11,7 +11,7 @@ export class OnCreate extends Command<SingleHoopRoom> {
   }
 
   execute() {
-    this.world.addHoop(64, 320);
+    this.world.addHoop(96, 320);
 
     this.world.addPlayer(
       "bot_1",

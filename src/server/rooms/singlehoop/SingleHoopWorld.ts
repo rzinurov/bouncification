@@ -1,9 +1,9 @@
-import { Bodies, Body, Engine, Sleeping, World } from "matter-js";
+import { Bodies, Body, Composite, Engine, Sleeping, World } from "matter-js";
 import { SingleHoopState } from "../../../common/schema/SingleHoopState";
 import { PlayerState } from "../../../common/schema/PlayerState";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";
-import { VectorState } from "../../../common/schema/Primitives";
+import { PositionState } from "../../../common/schema/Primitives";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;
@@ -58,15 +58,35 @@ export default class SingleHoopWorld {
   }
 
   addHoop(x: number, y: number) {
-    const hoop = Bodies.rectangle(
-      x,
-      y,
-      WorldConfig.hoop.backboard.width,
-      WorldConfig.hoop.backboard.height,
-      { isStatic: true }
+    const backBoardOffset = new PositionState(-16, 0);
+    const edgeOffset = new PositionState(160, 64);
+
+    const backboardConfig = WorldConfig.hoop.backboard;
+    const backboard = Bodies.rectangle(
+      x + backBoardOffset.x,
+      y + backBoardOffset.y,
+      backboardConfig.width,
+      backboardConfig.height
     );
+
+    const edgeConfig = WorldConfig.hoop.edge;
+    const edge = Bodies.circle(
+      x + edgeOffset.x,
+      y + edgeOffset.y,
+      edgeConfig.size / 2
+    );
+
+    const hoop = Body.create({
+      parts: [backboard, edge],
+      isStatic: true,
+    });
+    Body.setPosition(hoop, { x, y });
+
     World.add(this.engine.world, [hoop]);
-    this.state.hoop.position = new VectorState(x, y);
+
+    this.state.hoop.position = new PositionState(x, y);
+    this.state.hoop.backboardOffset = backBoardOffset;
+    this.state.hoop.edgeOffset = edgeOffset;
   }
 
   addPlayer(sessionId: string, name: string, x: number, y: number) {

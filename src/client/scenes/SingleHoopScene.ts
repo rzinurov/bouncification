@@ -28,7 +28,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     const players: { [name: string]: Player } = {};
 
     server.onInitialState((state) => {
-      const hoop = new Hoop(this, state.hoop);
+      new Hoop(this, state.hoop);
     });
 
     server.onJoined(({ sessionId, state }) => {

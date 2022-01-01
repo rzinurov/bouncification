@@ -1,6 +1,6 @@
 import { Schema, type } from "@colyseus/schema";
 
-export class VectorState extends Schema {
+export class PositionState extends Schema {
   @type("number")
   x: number;
 

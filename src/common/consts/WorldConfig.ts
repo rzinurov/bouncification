@@ -7,7 +7,10 @@ export default {
   hoop: {
     backboard: {
       width: 32,
-      height: 256,
+      height: 320,
+    },
+    edge: {
+      size: 16,
     },
   },
   bounds: {

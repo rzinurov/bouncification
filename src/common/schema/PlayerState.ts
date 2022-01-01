@@ -1,15 +1,15 @@
 import { Schema, type } from "@colyseus/schema";
-import { VectorState } from "./Primitives";
+import { PositionState } from "./Primitives";
 
 export class PlayerState extends Schema {
   @type("string")
   name: string;
 
-  @type(VectorState)
-  position: VectorState;
+  @type(PositionState)
+  position: PositionState;
 
-  @type(VectorState)
-  velocity: VectorState;
+  @type(PositionState)
+  velocity: PositionState;
 
   @type("number")
   angle: number = 0;
@@ -20,7 +20,7 @@ export class PlayerState extends Schema {
   constructor(name: string, x: number, y: number) {
     super();
     this.name = name;
-    this.position = new VectorState(x, y);
-    this.velocity = new VectorState(0, 0);
+    this.position = new PositionState(x, y);
+    this.velocity = new PositionState(0, 0);
   }
 }
