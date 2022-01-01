@@ -146,7 +146,7 @@ export default class Server {
     this.events.on(Events.Disconnected, cb, context);
   }
 
-  jumpTo({ x, y }: { x: number; y: number }) {
-    this.room.send("jumpTo", { x, y });
+  jump({ x, y }: { x: number; y: number }) {
+    this.room.send("jump", { x, y });
   }
 }

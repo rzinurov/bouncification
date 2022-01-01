@@ -1,18 +1,8 @@
-import { Body } from "matter-js";
-import WorldConfig from "../consts/WorldConfig";
-
 export default {
-  getVelocity: (
-    playerPosition: { x: number; y: number },
-    pointerPosition: { x: number; y: number }
-  ) => {
+  getVelocity: (vector: { x: number; y: number }) => {
     return {
-      x:
-        ((pointerPosition.x - playerPosition.x) / WorldConfig.bounds.width) *
-        WorldConfig.player.maxVelocity,
-      y:
-        ((pointerPosition.y - playerPosition.y) / WorldConfig.bounds.height) *
-        WorldConfig.player.maxVelocity,
+      x: Math.min(30, vector.x * 0.2),
+      y: Math.min(30, vector.y * 0.2),
     };
   },
 };

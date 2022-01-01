@@ -18,8 +18,8 @@ export class SingleHoopRoom extends Room<SingleHoopState> {
     this.setPatchRate(1000 / 20);
     this.setSimulationInterval((dt) => this.update(dt));
 
-    this.onMessage("jumpTo", (client, message) => {
-      this.world.jumpTo(client.sessionId, message.x, message.y);
+    this.onMessage("jump", (client, message: { x: number; y: number }) => {
+      this.world.jump(client.sessionId, message);
     });
 
     this.maxClients = 10;

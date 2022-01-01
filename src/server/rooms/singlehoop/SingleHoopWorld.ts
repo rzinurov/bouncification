@@ -95,13 +95,10 @@ export default class SingleHoopWorld {
     this.state.players.delete(sessionId);
   }
 
-  jumpTo(sessionId: string, x: number, y: number) {
+  jump(sessionId: string, vector: { x: number; y: number }) {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
-    Body.setVelocity(
-      player,
-      PlayerPhysics.getVelocity(player.position, { x, y })
-    );
+    Body.setVelocity(player, PlayerPhysics.getVelocity(vector));
   }
 
   update(dt: number) {
