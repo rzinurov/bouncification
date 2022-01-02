@@ -42,6 +42,7 @@
     "express": "^4.16.4",
     "matter-js": "^0.18.0",
     "phaser": "^3.55.2",
+    "phaser3-rex-plugins": "^1.1.65",
     "regenerator-runtime": "^0.13.9",
     "unique-names-generator": "^4.6.0"
   },

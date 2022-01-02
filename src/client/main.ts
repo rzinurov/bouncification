@@ -6,6 +6,7 @@ import BootstrapScene from "./scenes/BootstrapScene";
 import WorldConfig from "common/consts/WorldConfig";
 import MenuScene from "./scenes/MenuScene";
 import PreloaderScene from "./scenes/PreloaderScene";
+import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
 
 const debugConfig = {
   showAxes: false,
@@ -89,6 +90,19 @@ const config: Phaser.Types.Core.GameConfig = {
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
+  parent: "game",
+  dom: {
+    createContainer: true,
+  },
+  plugins: {
+    global: [
+      {
+        key: "rexInputTextPlugin",
+        plugin: InputTextPlugin,
+        start: true,
+      },
+    ],
   },
 };
 

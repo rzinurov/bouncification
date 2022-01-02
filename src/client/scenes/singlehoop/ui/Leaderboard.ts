@@ -1,11 +1,12 @@
+import Fonts from "client/consts/Fonts";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import Phaser from "phaser";
 
-const defaultColor = "#ffdd00";
-const playerColor = "#00dd00";
+const defaultColor = 0xffdd00;
+const playerColor = 0x00dd00;
 export default class Headerboard extends Phaser.GameObjects.Container {
-  nameLabels: Phaser.GameObjects.Text[] = [];
-  scoreLabels: Phaser.GameObjects.Text[] = [];
+  nameLabels: Phaser.GameObjects.BitmapText[] = [];
+  scoreLabels: Phaser.GameObjects.BitmapText[] = [];
   scores = {};
   maxRows: number;
   playerSessionId: string;
@@ -31,22 +32,15 @@ export default class Headerboard extends Phaser.GameObjects.Container {
 
     for (let i = 0; i < this.maxRows; i++) {
       const nameLabel = this.scene.add
-        .text(8, 8 + i * 25, "", {
-          font: `24px Arial`,
-          color: defaultColor,
-          fixedWidth: width * 0.75,
-        })
-        .setOrigin(0, 0) as Phaser.GameObjects.Text;
+        .bitmapText(8, 8 + i * 25, Fonts.Pixel, "", 24)
+        .setTint(defaultColor)
+        .setOrigin(0, 0) as Phaser.GameObjects.BitmapText;
       this.nameLabels.push(nameLabel);
       this.add(nameLabel);
 
       const scoreLabel = this.scene.add
-        .text(width - 8, 8 + i * 25, "", {
-          font: `24px Arial`,
-          color: defaultColor,
-          align: "right",
-        })
-        .setOrigin(1, 0) as Phaser.GameObjects.Text;
+        .bitmapText(width - 8, 8 + i * 25, Fonts.Pixel, "", 24)
+        .setOrigin(1, 0) as Phaser.GameObjects.BitmapText;
       this.scoreLabels.push(scoreLabel);
       this.add(scoreLabel);
     }
@@ -71,11 +65,11 @@ export default class Headerboard extends Phaser.GameObjects.Container {
         const row = rows[i];
         const color =
           row.sessionId === this.playerSessionId ? playerColor : defaultColor;
-        this.nameLabels[i].setText(row.name).setColor(color);
-        this.scoreLabels[i].setText(row.score).setColor(color);
+        this.nameLabels[i].setText(row.name).setTint(color);
+        this.scoreLabels[i].setText(row.score).setTint(color);
       } else {
-        this.nameLabels[i].setText("").setColor(defaultColor);
-        this.scoreLabels[i].setText("").setColor(defaultColor);
+        this.nameLabels[i].setText("").setTint(defaultColor);
+        this.scoreLabels[i].setText("").setTint(defaultColor);
       }
     }
   }

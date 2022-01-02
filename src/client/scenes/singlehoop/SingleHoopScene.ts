@@ -20,7 +20,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     super(Scenes.SingleHoop);
   }
 
-  async create(data: { server: Server }) {
+  async create(data: { server: Server; name: string }) {
     const { server } = data;
 
     const players: { [name: string]: Player } = {};
@@ -82,7 +82,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     this.matter.world.setBounds(0, 0, width, height);
 
     try {
-      await server.join(Names.randomName());
+      await server.join(data.name);
     } catch (e) {
       this.events.emit(
         SingleHoopSceneEvents.ConnectionError,

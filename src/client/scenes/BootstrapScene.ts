@@ -26,10 +26,16 @@ export default class BootstrapScene extends Phaser.Scene {
 
     this.scene
       .get(Scenes.Menu)
-      .events.on(MenuSceneEvents.ConnectButtonClicked, () => {
-        this.scene.stop(Scenes.Menu);
-        this.scene.start(Scenes.SingleHoop, { server: this.server });
-      });
+      .events.on(
+        MenuSceneEvents.ConnectButtonClicked,
+        (data: { name: string }) => {
+          this.scene.stop(Scenes.Menu);
+          this.scene.start(Scenes.SingleHoop, {
+            server: this.server,
+            name: data.name,
+          });
+        }
+      );
 
     this.scene
       .get(Scenes.SingleHoop)
