@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 
 import SingleHoopScene from "./scenes/SingleHoopScene";
 import BootstrapScene from "./scenes/BootstrapScene";
+import WorldConfig from "common/consts/WorldConfig";
 
 const debugConfig = {
   showAxes: false,
@@ -78,7 +79,7 @@ const config: Phaser.Types.Core.GameConfig = {
     default: "matter",
     matter: {
       enableSleeping: true,
-      gravity: { y: 1 },
+      gravity: { y: WorldConfig.gravity.y },
       debug: /localhost/.test(window.location.host) ? debugConfig : undefined,
     },
   },

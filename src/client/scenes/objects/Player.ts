@@ -3,8 +3,7 @@ import { PlayerState } from "common/schema/PlayerState";
 import Phaser from "phaser";
 
 export default class Player extends Phaser.Physics.Matter.Image {
-  private aimGraphics: Phaser.GameObjects.Graphics;
-  private aimCurve: Phaser.Curves.CubicBezier;
+  private aim: Phaser.GameObjects.Group;
   private nameLabel: Phaser.GameObjects.Text;
   private aimVelocity?: { x: number; y: number };
 
@@ -16,14 +15,10 @@ export default class Player extends Phaser.Physics.Matter.Image {
 
     this.scene.add.existing(this);
 
-    this.aimGraphics = this.scene.add.graphics();
-
-    this.aimCurve = new Phaser.Curves.CubicBezier(
-      new Phaser.Math.Vector2(0, 0),
-      new Phaser.Math.Vector2(0, 0),
-      new Phaser.Math.Vector2(0, 0),
-      new Phaser.Math.Vector2(0, 0)
-    );
+    this.aim = this.scene.add.group([], { classType: Phaser.GameObjects.Arc });
+    for (let i = 0; i < 16; i++) {
+      this.aim.add(this.scene.add.circle(0, 0, 8, 0xffffff, 0.75 - i * 0.05));
+    }
 
     this.nameLabel = this.scene.add
       .text(0, 0, state.name, {
@@ -36,7 +31,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
   }
 
   jump(velocity: { x: number; y: number }) {
-    this.setVelocity(velocity.x, velocity.y);
+    this.setAwake().setVelocity(velocity.x, velocity.y);
   }
 
   getAimVelocity() {
@@ -58,11 +53,9 @@ export default class Player extends Phaser.Physics.Matter.Image {
     ) => {
       return checkNumberDiff(a.x, b.x) || checkNumberDiff(a.y, b.y);
     };
-
     const checkNumberDiff = (a: number, b: number) => {
       return Math.abs(a - b) >= 0.5;
     };
-
     if (checkVectorDiff(this, state.position)) {
       this.setPosition(state.position.x, state.position.y);
       this.setAwake();
@@ -89,53 +82,62 @@ export default class Player extends Phaser.Physics.Matter.Image {
       !this.aimVelocity ||
       (this.aimVelocity.x === 0 && this.aimVelocity.y === 0)
     ) {
-      this.aimGraphics.setVisible(false);
+      this.aim.setVisible(false);
       return;
     }
 
-    this.aimGraphics.setPosition(this.x, this.y).setVisible(true);
+    const trajectory = this.calculateTrajectory(
+      this.aimVelocity,
+      this.aim.getChildren().length * 2
+    );
 
-    const aimLength = 15;
-
-    const getTracePosition = (t: number) => {
-      const velocityMultiplier = 6.5;
-      const airFriction = 0.25 * Math.pow(t, 2);
-      const g = 10;
-      const vx = this.aimVelocity!.x * velocityMultiplier;
-      const vy = this.aimVelocity!.y * velocityMultiplier;
-      const angle = Math.atan2(vy, vx);
-      return {
-        x: Math.sign(vx) * (vx * t * Math.cos(angle) - airFriction),
-        y:
-          Math.sign(vy) * (vy * t * Math.sin(angle) - airFriction) +
-          (g * Math.pow(t, 2)) / 2,
-      };
-    };
-
-    const p1 = getTracePosition(aimLength * 0.25);
-    const p2 = getTracePosition(aimLength * 0.75);
-    const p3 = getTracePosition(aimLength);
-
-    this.aimCurve.p0.x = 0;
-    this.aimCurve.p0.y = 0;
-    this.aimCurve.p1.x = p1.x;
-    this.aimCurve.p1.y = p1.y;
-    this.aimCurve.p2.x = p2.x;
-    this.aimCurve.p2.y = p2.y;
-    this.aimCurve.p3.x = p3.x;
-    this.aimCurve.p3.y = p3.y;
-
-    const points = this.aimCurve.getPoints(16);
-    this.aimGraphics.clear();
-    for (let i = 0; i < points.length; i++) {
-      this.aimGraphics.fillStyle(0xffffff, 0.8 - i * 0.05);
-      this.aimGraphics.fillCircle(points[i].x, points[i].y, 8);
+    for (let i = 0; i < this.aim.getChildren().length; i++) {
+      const aimPoint = this.aim.getChildren()[i] as Phaser.GameObjects.Arc;
+      const trajectoryPoint = trajectory[i * 2];
+      aimPoint.setPosition(trajectoryPoint.x, trajectoryPoint.y);
     }
+
+    this.aim.setVisible(true);
+  }
+
+  private calculateTrajectory(
+    velocity: { x: number; y: number },
+    numPoints: number
+  ) {
+    const points: { x: number; y: number }[] = [];
+
+    // @ts-ignore: Property 'Matter' does not exist on type 'typeof Matter'.
+    const Body = Phaser.Physics.Matter.Matter.Body;
+
+    const matterBody = this.body as MatterJS.BodyType;
+    const realPosition = { ...matterBody.position };
+    const realForce = { ...matterBody.force };
+    const realVelocity = { ...matterBody.velocity };
+    const realAngle = matterBody.angle;
+    const realAngularVelocity = matterBody.angularVelocity;
+
+    Body.setVelocity(matterBody, velocity);
+
+    for (let i = 0; i < numPoints; i++) {
+      matterBody.force.y += matterBody.mass * WorldConfig.gravity.y * 0.001;
+      Body.update(matterBody, 16.19, 1, 1);
+      points.push({ ...matterBody.position });
+      matterBody.force.x = 0;
+      matterBody.force.y = 0;
+    }
+
+    Body.setPosition(matterBody, realPosition);
+    matterBody.force = realForce;
+    Body.setVelocity(matterBody, realVelocity);
+    Body.setAngle(matterBody, realAngle);
+    Body.setAngularVelocity(matterBody, realAngularVelocity);
+
+    return points;
   }
 
   destroy() {
     this.nameLabel.destroy();
-    this.aimGraphics.destroy();
+    this.aim.destroy();
     super.destroy();
   }
 }

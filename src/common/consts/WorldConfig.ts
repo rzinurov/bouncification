@@ -17,4 +17,7 @@ export default {
     width: 1280,
     height: 1280,
   },
+  gravity: {
+    y: 1,
+  },
 };

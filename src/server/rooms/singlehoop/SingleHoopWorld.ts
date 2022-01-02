@@ -18,6 +18,7 @@ export default class SingleHoopWorld {
     this.state = state;
     this.engine = Engine.create();
     this.engine.enableSleeping = true;
+    this.engine.gravity.y = WorldConfig.gravity.y;
 
     this.addWorldBounds();
 
