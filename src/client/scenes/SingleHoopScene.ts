@@ -4,12 +4,12 @@ import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
 import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
-import Trace, { TraceEvents } from "./objects/Trace";
+import Aim, { TraceEvents } from "./objects/Aim";
 import Leaderboard from "./ui/Leaderboard";
 
 export default class SingleHoopScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
-  trace?: Trace;
+  trace?: Aim;
 
   constructor() {
     super("single-hoop");
@@ -41,7 +41,7 @@ export default class SingleHoopScene extends Phaser.Scene {
       const player = new Player(this, state, true);
       players[sessionId] = player;
 
-      this.trace = new Trace(this, player);
+      this.trace = new Aim(this, player);
       this.trace.on(TraceEvents.Shoot, (velocity: { x: number; y: number }) => {
         server.jump(velocity);
         player.jump(velocity);
