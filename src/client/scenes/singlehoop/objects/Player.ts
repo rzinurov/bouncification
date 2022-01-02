@@ -1,3 +1,4 @@
+import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
 import Phaser from "phaser";
@@ -8,7 +9,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
   private aimVelocity?: { x: number; y: number };
 
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
-    super(scene.matter.world, state.position.x, state.position.y, "ball");
+    super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
 
     this.setCircle(WorldConfig.player.spriteSize / 2);
     this.setBounce(WorldConfig.player.restitution);

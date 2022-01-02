@@ -1,33 +1,27 @@
+import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
 import Names from "client/utils/Names";
 import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
+import Aim, { TraceEvents } from "./objects/Aim";
 import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
-import Aim, { TraceEvents } from "./objects/Aim";
 import Leaderboard from "./ui/Leaderboard";
+
+export enum SingleHoopSceneEvents {
+  ConnectionError = "connection-error",
+}
 
 export default class SingleHoopScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
   trace?: Aim;
 
   constructor() {
-    super("single-hoop");
-  }
-
-  preload() {
-    this.load.image("ball", "assets/img/ball.png");
+    super(Scenes.SingleHoop);
   }
 
   async create(data: { server: Server }) {
     const { server } = data;
-
-    try {
-      await server.join(Names.randomName());
-    } catch (e) {
-      alert("Unable to connect to server");
-      return;
-    }
 
     const players: { [name: string]: Player } = {};
 
@@ -81,10 +75,19 @@ export default class SingleHoopScene extends Phaser.Scene {
     });
 
     server.onDisconnected(() => {
-      window.location.reload();
+      this.events.emit(SingleHoopSceneEvents.ConnectionError, "disconnected");
     });
 
     const { width, height } = WorldConfig.bounds;
     this.matter.world.setBounds(0, 0, width, height);
+
+    try {
+      await server.join(Names.randomName());
+    } catch (e) {
+      this.events.emit(
+        SingleHoopSceneEvents.ConnectionError,
+        `unable to connect, please retry later`
+      );
+    }
   }
 }

@@ -149,4 +149,8 @@ export default class Server {
   jump({ x, y }: { x: number; y: number }) {
     this.room.send("jump", { x, y });
   }
+
+  removeAllListeners() {
+    this.events.removeAllListeners();
+  }
 }

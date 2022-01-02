@@ -1,4 +1,4 @@
-import Player from "client/scenes/objects/Player";
+import Player from "client/scenes/singlehoop/objects/Player";
 import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";

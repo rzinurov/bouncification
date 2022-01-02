@@ -70,6 +70,9 @@ export default class Aim extends Phaser.GameObjects.Container {
   }
 
   private onPointerUp(pointer: { x: number; y: number }) {
+    if (!this.visible) {
+      return;
+    }
     this.setVisible(false);
     this.cursorLine.setPosition(0, 0).setTo(0, 0);
 

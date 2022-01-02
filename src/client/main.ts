@@ -1,9 +1,11 @@
 import Phaser from "phaser";
 import "regenerator-runtime/runtime";
 
-import SingleHoopScene from "./scenes/SingleHoopScene";
+import SingleHoopScene from "./scenes/singlehoop/SingleHoopScene";
 import BootstrapScene from "./scenes/BootstrapScene";
 import WorldConfig from "common/consts/WorldConfig";
+import MenuScene from "./scenes/MenuScene";
+import PreloaderScene from "./scenes/PreloaderScene";
 
 const debugConfig = {
   showAxes: false,
@@ -83,7 +85,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: /localhost/.test(window.location.host) ? debugConfig : undefined,
     },
   },
-  scene: [BootstrapScene, SingleHoopScene],
+  scene: [BootstrapScene, PreloaderScene, MenuScene, SingleHoopScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
