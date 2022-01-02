@@ -1,3 +1,3 @@
 # Bouncification
 
-A multiplayer game with a lot of bouncing balls
+A multiplayer game with bouncing balls
