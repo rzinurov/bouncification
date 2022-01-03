@@ -3,16 +3,25 @@ import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
 import Phaser from "phaser";
 
+const shadowMaxWidth = 96;
+const shadowMaxHeight = 16;
+const shadowMaxAlpha = 0.75;
 export default class Player extends Phaser.Physics.Matter.Image {
   private aim: Phaser.GameObjects.Group;
   private nameLabel: Phaser.GameObjects.Text;
   private aimVelocity?: { x: number; y: number };
+  private shadow: Phaser.GameObjects.Ellipse;
 
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
     super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
 
     this.setCircle(WorldConfig.player.spriteSize / 2);
     this.setBounce(WorldConfig.player.restitution);
+    this.setDepth(1);
+
+    this.shadow = scene.add
+      .ellipse(0, 0, shadowMaxWidth, shadowMaxHeight, 0x000000)
+      .setOrigin(0.5, 0.5);
 
     this.scene.add.existing(this);
 
@@ -72,6 +81,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
   preUpdate() {
     this.updateNameLabelPosition();
     this.updateAim();
+    this.updateShadow();
   }
 
   private updateNameLabelPosition() {
@@ -134,6 +144,19 @@ export default class Player extends Phaser.Physics.Matter.Image {
     Body.setAngularVelocity(matterBody, realAngularVelocity);
 
     return points;
+  }
+
+  updateShadow() {
+    const ballHeight = WorldConfig.bounds.height - this.y;
+    const maxHeight = WorldConfig.bounds.height;
+    this.shadow.setPosition(this.x, maxHeight);
+    this.shadow.setSize(
+      shadowMaxWidth - (shadowMaxWidth * ballHeight) / maxHeight,
+      shadowMaxHeight - (shadowMaxHeight * ballHeight) / maxHeight
+    );
+    this.shadow.setAlpha(
+      shadowMaxAlpha - (shadowMaxAlpha * ballHeight) / maxHeight
+    );
   }
 
   destroy() {
