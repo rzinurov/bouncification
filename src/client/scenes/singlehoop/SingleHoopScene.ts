@@ -84,12 +84,15 @@ export default class SingleHoopScene extends Phaser.Scene {
     this.matter.world.setBounds(0, 0, width, height);
 
     try {
+      this.scene.setVisible(false);
       await server.join(data.name);
     } catch (e) {
       this.events.emit(
         SingleHoopSceneEvents.ConnectionError,
         `unable to connect, please retry later`
       );
+    } finally {
+      this.scene.setVisible(true);
     }
   }
 }

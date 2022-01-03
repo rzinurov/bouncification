@@ -1,6 +1,7 @@
 import { Command } from "@colyseus/command";
 import SingleHoopWorld from "../SingleHoopWorld";
 import { SingleHoopRoom } from "../SingleHoopRoom";
+import WorldConfig from "common/consts/WorldConfig";
 
 export class OnCreate extends Command<SingleHoopRoom> {
   world!: SingleHoopWorld;
@@ -16,7 +17,8 @@ export class OnCreate extends Command<SingleHoopRoom> {
     this.world.addPlayer(
       "bot_1",
       "bot",
-      100 + Math.random() * 600,
+      WorldConfig.bounds.width / 2 +
+        (Math.random() * WorldConfig.bounds.width) / 4,
       100 + Math.random() * 200
     );
 

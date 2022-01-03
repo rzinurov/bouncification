@@ -35,7 +35,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     }
 
     this.nameLabel = this.scene.add
-      .bitmapText(0, 0, Fonts.Pixel, state.name, 20)
+      .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
       .setTint(isYou ? playerColor : defaultColor)
       .setOrigin(0.5);
 
@@ -159,11 +159,5 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.shadow.setAlpha(
       shadowMaxAlpha - (shadowMaxAlpha * ballHeight) / maxHeight
     );
-  }
-
-  destroy() {
-    this.nameLabel.destroy();
-    this.aim.destroy();
-    super.destroy();
   }
 }
