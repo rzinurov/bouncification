@@ -1,3 +1,4 @@
+import Fonts from "client/consts/Fonts";
 import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
@@ -6,9 +7,12 @@ import Phaser from "phaser";
 const shadowMaxWidth = 96;
 const shadowMaxHeight = 16;
 const shadowMaxAlpha = 0.75;
+
+const defaultColor = 0xffdd00;
+const playerColor = 0x00dd00;
 export default class Player extends Phaser.Physics.Matter.Image {
   private aim: Phaser.GameObjects.Group;
-  private nameLabel: Phaser.GameObjects.Text;
+  private nameLabel: Phaser.GameObjects.BitmapText;
   private aimVelocity?: { x: number; y: number };
   private shadow: Phaser.GameObjects.Ellipse;
 
@@ -31,11 +35,9 @@ export default class Player extends Phaser.Physics.Matter.Image {
     }
 
     this.nameLabel = this.scene.add
-      .text(0, 0, state.name, {
-        font: `32px Arial`,
-        color: isYou ? "#00dd00" : "#ffdd00",
-      })
-      .setOrigin(0.5) as Phaser.GameObjects.Text;
+      .bitmapText(0, 0, Fonts.Pixel, state.name, 20)
+      .setTint(isYou ? playerColor : defaultColor)
+      .setOrigin(0.5);
 
     this.updateState(state);
   }

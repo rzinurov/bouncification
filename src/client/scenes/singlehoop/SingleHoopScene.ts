@@ -45,9 +45,9 @@ export default class SingleHoopScene extends Phaser.Scene {
 
       this.leaderboard = new Leaderboard(
         this,
-        this.cameras.main.width - 320 - 16,
+        this.cameras.main.width - 512 - 16,
         16,
-        320,
+        512,
         272,
         10,
         sessionId

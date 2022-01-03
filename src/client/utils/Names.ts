@@ -1,13 +1,9 @@
-import {
-  uniqueNamesGenerator,
-  adjectives,
-  animals,
-} from "unique-names-generator";
+import { uniqueNamesGenerator, animals, colors } from "unique-names-generator";
 
 export default {
   randomName: () =>
     uniqueNamesGenerator({
-      dictionaries: [adjectives, animals],
+      dictionaries: [colors, animals],
       length: 2,
     }),
 };

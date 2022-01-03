@@ -63,6 +63,7 @@ export default class MenuScene extends Phaser.Scene {
       128,
       {
         text: playerName ? playerName : Names.randomName(),
+        maxLength: 16,
         fontSize: "64",
         align: "center",
         color: "#ffffff",
