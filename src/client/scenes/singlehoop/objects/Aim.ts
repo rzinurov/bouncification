@@ -37,6 +37,10 @@ export default class Aim extends Phaser.GameObjects.Container {
       this.onPointerUp(pointer);
     });
 
+    scene.input.on("gameout", () => {
+      this.onPointerUp({ x: this.x, y: this.y });
+    });
+
     scene.input.on(
       "pointermove",
       (pointer: { x: any; y: any; isDown: boolean }) => {

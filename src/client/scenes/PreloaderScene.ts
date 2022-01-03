@@ -48,6 +48,10 @@ export default class PreloaderScene extends Phaser.Scene {
     );
 
     this.load.image(Sprites.Ball, "assets/img/ball.png");
+    this.load.image(
+      Sprites.SingleHoopPitch,
+      "assets/img/single-hoop-pitch.png"
+    );
   }
 
   create() {

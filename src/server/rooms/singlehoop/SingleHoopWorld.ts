@@ -1,4 +1,3 @@
-import Player from "client/scenes/singlehoop/objects/Player";
 import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 import WorldConfig from "../../../common/consts/WorldConfig";
 import PlayerPhysics from "../../../common/physics/PlayerPhysics";
@@ -27,10 +26,10 @@ export default class SingleHoopWorld {
 
   addHoop(x: number, y: number) {
     const backBoardOffset = new PositionState(-16, 0);
-    const edgeOffset = new PositionState(160, 64);
+    const edgeOffset = new PositionState(168, 92);
 
     const backboardConfig = WorldConfig.hoop.backboard;
-    const backboard = Bodies.rectangle(
+    const backboardBody = Bodies.rectangle(
       x + backBoardOffset.x,
       y + backBoardOffset.y,
       backboardConfig.width,
@@ -38,13 +37,13 @@ export default class SingleHoopWorld {
     );
 
     const edgeConfig = WorldConfig.hoop.edge;
-    const edge = Bodies.circle(
+    const edgeBody = Bodies.circle(
       x + edgeOffset.x,
       y + edgeOffset.y,
       edgeConfig.size / 2
     );
 
-    const scoreSensor = Bodies.circle(
+    const scoreSensorBody = Bodies.circle(
       x + edgeOffset.x / 2,
       y + edgeOffset.y + 32,
       8,
@@ -53,23 +52,22 @@ export default class SingleHoopWorld {
         isSensor: true,
       }
     );
-    scoreSensor.label = "score_sensor";
+    scoreSensorBody.label = "score_sensor";
 
     Events.on(this.engine, "collisionStart", (event) => {
       event.pairs.forEach((pair) => {
-        if (pair.bodyA.label === scoreSensor.label) {
+        if (pair.bodyA.label === scoreSensorBody.label) {
           this.onScoreSensorHit(pair.bodyB);
-        } else if (pair.bodyB.label === scoreSensor.label) {
+        } else if (pair.bodyB.label === scoreSensorBody.label) {
           this.onScoreSensorHit(pair.bodyA);
         }
       });
     });
 
     const hoop = Body.create({
-      parts: [backboard, edge, scoreSensor],
+      parts: [backboardBody, edgeBody, scoreSensorBody],
       isStatic: true,
     });
-    Body.setPosition(hoop, { x, y });
 
     World.add(this.engine.world, [hoop]);
 

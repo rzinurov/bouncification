@@ -6,16 +6,16 @@ export default {
   },
   hoop: {
     backboard: {
-      width: 32,
+      width: 16,
       height: 320,
     },
     edge: {
-      size: 16,
+      size: 12,
     },
   },
   bounds: {
     width: 1280,
-    height: 1280,
+    height: 1180,
   },
   gravity: {
     y: 1,

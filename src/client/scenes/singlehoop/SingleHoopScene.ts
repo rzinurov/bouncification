@@ -1,4 +1,5 @@
 import Scenes from "client/consts/Scenes";
+import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
 import Names from "client/utils/Names";
 import WorldConfig from "common/consts/WorldConfig";
@@ -22,6 +23,8 @@ export default class SingleHoopScene extends Phaser.Scene {
 
   async create(data: { server: Server; name: string }) {
     const { server } = data;
+
+    this.add.image(-400, 115, Sprites.SingleHoopPitch).setOrigin(0, 0);
 
     const players: { [name: string]: Player } = {};
 
