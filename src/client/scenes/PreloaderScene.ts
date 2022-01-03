@@ -52,6 +52,7 @@ export default class PreloaderScene extends Phaser.Scene {
       Sprites.SingleHoopPitch,
       "assets/img/single-hoop-pitch.png"
     );
+    this.load.image(Sprites.ChainLink, "assets/img/chain-link.png");
   }
 
   create() {

@@ -1,7 +1,7 @@
 import { Command } from "@colyseus/command";
 import SingleHoopWorld from "../SingleHoopWorld";
 import { SingleHoopRoom } from "../SingleHoopRoom";
-import WorldConfig from "common/consts/WorldConfig";
+import WorldConfig from "../../../../common/consts/WorldConfig";
 
 export class OnCreate extends Command<SingleHoopRoom> {
   world!: SingleHoopWorld;
