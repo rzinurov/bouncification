@@ -11,7 +11,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "rootDir": "src",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "paths": {
+      "common/*": ["./common/*"],
+      "server/*": ["./server/*"]
+    }
   },
   "include": ["src/common/**/*", "src/server/**/*", "src/*"],
   "ts-node": {

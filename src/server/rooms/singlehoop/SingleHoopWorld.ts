@@ -1,10 +1,10 @@
 import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
-import WorldConfig from "../../../common/consts/WorldConfig";
-import PlayerPhysics from "../../../common/physics/PlayerPhysics";
-import { LeaderboardRowState } from "../../../common/schema/LeaderboardRowState";
-import { PlayerState } from "../../../common/schema/PlayerState";
-import { PositionState } from "../../../common/schema/Primitives";
-import { SingleHoopState } from "../../../common/schema/SingleHoopState";
+import WorldConfig from "common/consts/WorldConfig";
+import PlayerPhysics from "common/physics/PlayerPhysics";
+import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
+import { PlayerState } from "common/schema/PlayerState";
+import { PositionState } from "common/schema/Primitives";
+import { SingleHoopState } from "common/schema/SingleHoopState";
 
 export default class SingleHoopWorld {
   engine: Matter.Engine;

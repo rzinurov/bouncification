@@ -1,6 +1,6 @@
 import { Dispatcher } from "@colyseus/command";
 import { Client, Room } from "colyseus";
-import { SingleHoopState as SingleHoopState } from "../../../common/schema/SingleHoopState";
+import { SingleHoopState as SingleHoopState } from "common/schema/SingleHoopState";
 import { OnCreate } from "./commands/OnCreate";
 import { OnJoin } from "./commands/OnJoin";
 import { OnLeave } from "./commands/OnLeave";

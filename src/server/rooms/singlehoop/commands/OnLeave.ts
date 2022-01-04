@@ -1,6 +1,6 @@
 import { Command } from "@colyseus/command";
-import SingleHoopWorld from "../SingleHoopWorld";
-import { SingleHoopRoom } from "../SingleHoopRoom";
+import SingleHoopWorld from "server/rooms/singlehoop/SingleHoopWorld";
+import { SingleHoopRoom } from "server/rooms/singlehoop/SingleHoopRoom";
 
 export class OnLeave extends Command<SingleHoopRoom, { sessionId: string }> {
   world!: SingleHoopWorld;

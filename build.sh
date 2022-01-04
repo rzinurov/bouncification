@@ -3,6 +3,7 @@
 rm -rf ./dist/server
 
 tsc --project tsconfig.server.json
+tscpaths -p tsconfig.server.json -s ./src -o ./dist/server
 
 cp package.json ./dist/server
 cp arena.env ./dist/server
