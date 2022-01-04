@@ -4,17 +4,22 @@ import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
 import Phaser from "phaser";
 
-const shadowMaxWidth = 96;
-const shadowMaxHeight = 16;
-const shadowMaxAlpha = 0.75;
+const SHADOW_MAX_WIDTH = 96;
+const SHADOW_MAX_HEIGHT = 16;
+const SHADOW_MAX_ALPHA = 0.75;
 
-const defaultColor = 0xffdd00;
-const playerColor = 0x00dd00;
+const DEFAULT_NAME_COLOR = 0xffdd00;
+const PLAYER_NAME_COLOR = 0x00dd00;
+
+const JUMP_TIMEOUT_PERIOD = 3000;
+const JUMP_TIMEOUT_INDICATOR_COLORS = [0xdddddd, 0xff0000];
 export default class Player extends Phaser.Physics.Matter.Image {
   private aim: Phaser.GameObjects.Group;
   private nameLabel: Phaser.GameObjects.BitmapText;
   private aimVelocity?: { x: number; y: number };
   private shadow: Phaser.GameObjects.Ellipse;
+  private jumpTimeout: number = 0;
+  private jumpTimeoutIndicator: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
     super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
@@ -24,7 +29,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.setDepth(1);
 
     this.shadow = scene.add
-      .ellipse(0, 0, shadowMaxWidth, shadowMaxHeight, 0x000000)
+      .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, 0x000000)
       .setOrigin(0.5, 0.5);
 
     this.scene.add.existing(this);
@@ -36,14 +41,20 @@ export default class Player extends Phaser.Physics.Matter.Image {
 
     this.nameLabel = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
-      .setTint(isYou ? playerColor : defaultColor)
+      .setTint(isYou ? PLAYER_NAME_COLOR : DEFAULT_NAME_COLOR)
       .setOrigin(0.5);
+
+    this.jumpTimeoutIndicator = this.scene.add
+      .graphics()
+      .setAlpha(0.75)
+      .setDepth(2);
 
     this.updateState(state);
   }
 
   jump(velocity: { x: number; y: number }) {
-    this.setAwake().setVelocity(velocity.x, velocity.y);
+    // this.setAwake().setVelocity(velocity.x, velocity.y);
+    this.jumpTimeout = JUMP_TIMEOUT_PERIOD;
   }
 
   getAimVelocity() {
@@ -80,10 +91,11 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.setAngularVelocity(state.angularVelocity);
   }
 
-  preUpdate() {
+  preUpdate(t: number, dt: number) {
     this.updateNameLabelPosition();
     this.updateAim();
     this.updateShadow();
+    this.updateJumpTimeoutIndicator(dt);
   }
 
   private updateNameLabelPosition() {
@@ -91,16 +103,13 @@ export default class Player extends Phaser.Physics.Matter.Image {
   }
 
   private updateAim() {
-    if (
-      !this.aimVelocity ||
-      (this.aimVelocity.x === 0 && this.aimVelocity.y === 0)
-    ) {
+    if (!this.canJump() || !this.isAiming()) {
       this.aim.setVisible(false);
       return;
     }
 
     const trajectory = this.calculateTrajectory(
-      this.aimVelocity,
+      this.aimVelocity!,
       this.aim.getChildren().length * 2
     );
 
@@ -148,16 +157,66 @@ export default class Player extends Phaser.Physics.Matter.Image {
     return points;
   }
 
-  updateShadow() {
+  private updateShadow() {
     const ballHeight = WorldConfig.bounds.height - this.y;
     const maxHeight = WorldConfig.bounds.height;
     this.shadow.setPosition(this.x, maxHeight);
     this.shadow.setSize(
-      shadowMaxWidth - (shadowMaxWidth * ballHeight) / maxHeight,
-      shadowMaxHeight - (shadowMaxHeight * ballHeight) / maxHeight
+      SHADOW_MAX_WIDTH - (SHADOW_MAX_WIDTH * ballHeight) / maxHeight,
+      SHADOW_MAX_HEIGHT - (SHADOW_MAX_HEIGHT * ballHeight) / maxHeight
     );
     this.shadow.setAlpha(
-      shadowMaxAlpha - (shadowMaxAlpha * ballHeight) / maxHeight
+      SHADOW_MAX_ALPHA - (SHADOW_MAX_ALPHA * ballHeight) / maxHeight
     );
+  }
+
+  private updateJumpTimeoutIndicator(dt: number) {
+    this.jumpTimeout -= dt;
+    this.jumpTimeout = Math.max(this.jumpTimeout, 0);
+
+    if (this.canJump() || !this.isAiming()) {
+      this.jumpTimeoutIndicator.setVisible(false);
+      return;
+    }
+
+    const color =
+      Math.round(this.jumpTimeout / 200) % 2
+        ? JUMP_TIMEOUT_INDICATOR_COLORS[0]
+        : JUMP_TIMEOUT_INDICATOR_COLORS[1];
+
+    const position = this.getPosition();
+
+    this.jumpTimeoutIndicator
+      .clear()
+      .lineStyle(6, color, 1)
+      .beginPath()
+      .arc(
+        position.x,
+        position.y,
+        32,
+        Phaser.Math.DegToRad(-90),
+        Phaser.Math.DegToRad(
+          -90 + (this.jumpTimeout / JUMP_TIMEOUT_PERIOD) * 360
+        )
+      )
+      .strokePath()
+      .setVisible(true);
+  }
+
+  private getPosition() {
+    return {
+      x: this.x + this.body.velocity.x,
+      y: this.y + this.body.velocity.y,
+    };
+  }
+
+  isAiming() {
+    return (
+      this.aimVelocity && (this.aimVelocity.x !== 0 || this.aimVelocity.y !== 0)
+    );
+  }
+
+  canJump() {
+    return this.jumpTimeout === 0;
   }
 }

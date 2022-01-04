@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import Player from "./Player";
 
 export enum TraceEvents {
-  Shoot = "shoot",
+  Jump = "jump",
 }
 
 const AIM_VELOCITY_MULTIPLIER = 0.2;
@@ -80,8 +80,11 @@ export default class Aim extends Phaser.GameObjects.Container {
     this.setVisible(false);
     this.cursorLine.setPosition(0, 0).setTo(0, 0);
 
-    const velocity = this.getAimVelocity(pointer);
-    this.emit(TraceEvents.Shoot, velocity);
+    if (this.player.isAiming() && this.player.canJump()) {
+      const velocity = this.getAimVelocity(pointer);
+      this.emit(TraceEvents.Jump, velocity);
+    }
+
     this.player.clearAimVelocity();
   }
 
