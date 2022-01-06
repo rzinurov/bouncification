@@ -1,12 +1,14 @@
 import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
+import Rooms from "common/consts/Rooms";
 import Phaser from "phaser";
+import { LobbySceneEvents } from "./LobbyScene";
 import { MenuSceneEvents } from "./MenuScene";
 import { PreloaderSceneEvents } from "./PreloaderScene";
-import { SingleHoopSceneEvents } from "./singlehoop/SingleHoopScene";
 
 export default class BootstrapScene extends Phaser.Scene {
   private server!: Server;
+  private name!: string;
 
   constructor() {
     super(Scenes.Bootstrap);
@@ -29,63 +31,101 @@ export default class BootstrapScene extends Phaser.Scene {
       .events.on(
         MenuSceneEvents.ConnectButtonClicked,
         async (data: { name: string }) => {
-          this.scene.stop(Scenes.Menu);
-          this.server.removeAllListeners();
-          this.scene.start(Scenes.SingleHoop, {
-            server: this.server,
-            name: data.name,
-          });
-          const roomId = window.location.hash?.substring(1);
-          if (roomId) {
-            await this.joinRoomById(roomId, data.name);
-          } else {
-            await this.joinOrCreateRoom(data.name);
-          }
+          await this.connect(data);
         }
       );
-
-    this.scene
-      .get(Scenes.SingleHoop)
-      .events.on(SingleHoopSceneEvents.ConnectionError, (message: string) => {
-        this.scene.stop(Scenes.SingleHoop);
-        this.scene.start(Scenes.Menu, { errorMessage: message });
-      });
 
     this.scene.launch(Scenes.Preloader);
   }
 
-  private async createRoom(name: string) {
+  private async connect(data: { name: string }) {
+    this.name = data.name;
+    this.scene.stop(Scenes.Menu);
+    const roomId = window.location.hash?.substring(1);
+    if (roomId) {
+      await this.joinSingleHoopRoom(roomId);
+    } else {
+      await this.joinLobbyRoom();
+    }
+  }
+
+  private async joinSingleHoopRoom(roomId: string) {
+    this.server.removeAllListeners();
+    window.location.hash = roomId;
+
+    this.scene.start(Scenes.SingleHoop, {
+      server: this.server,
+      name: this.name,
+    });
+
+    this.server.onDisconnected(() => {
+      this.scene.stop(Scenes.SingleHoop);
+      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+    });
+
     try {
-      const roomId = await this.server.create(name);
-      window.location.hash = roomId;
+      await this.server.joinById(roomId, this.name);
     } catch (e) {
       this.scene.stop(Scenes.SingleHoop);
-      this.scene.start(Scenes.Menu, {
-        errorMessage: "unable to create a room, please retry later",
+      console.log(`Unable to join room ${roomId}. Showing lobby instead.`);
+      await this.joinLobbyRoom();
+    }
+  }
+
+  private async joinLobbyRoom() {
+    this.server.removeAllListeners();
+    window.location.hash = "";
+
+    this.scene.start(Scenes.Lobby, {
+      server: this.server,
+    });
+
+    this.scene
+      .get(Scenes.Lobby)
+      .events.on(LobbySceneEvents.CreateButtonClicked, async () => {
+        this.scene.stop(Scenes.Lobby);
+        await this.createSingleHoopRoom();
+      })
+      .on(LobbySceneEvents.JoinButtonClicked, async (roomId: string) => {
+        this.scene.stop(Scenes.Lobby);
+        await this.joinSingleHoopRoom(roomId);
       });
-    }
-  }
 
-  private async joinRoomById(roomId: string, name: string) {
-    try {
-      await this.server.joinById(roomId, name);
-    } catch (e) {
-      console.log(
-        `Unable to join room ${roomId}. Will create or join a random room instead.`
-      );
-      this.joinOrCreateRoom(name);
-    }
-  }
-
-  private async joinOrCreateRoom(name: string) {
-    try {
-      const roomId = await this.server.joinOrCreate(name);
-      window.location.hash = roomId;
-    } catch (e) {
+    this.server.onDisconnected(() => {
       this.scene.stop(Scenes.SingleHoop);
+      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+    });
+
+    try {
+      await this.server.joinLobby();
+    } catch (e) {
+      this.scene.stop(Scenes.Lobby);
       this.scene.start(Scenes.Menu, {
         errorMessage: "unable to connect, please retry later",
       });
+    }
+  }
+
+  private async createSingleHoopRoom() {
+    this.server.removeAllListeners();
+
+    this.scene.start(Scenes.SingleHoop, {
+      server: this.server,
+      name: this.name,
+    });
+
+    this.server.onDisconnected(() => {
+      this.scene.stop(Scenes.SingleHoop);
+      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+    });
+
+    try {
+      const roomId = await this.server.create(this.name);
+      window.location.hash = roomId;
+    } catch (e) {
+      this.scene.stop(Scenes.SingleHoop);
+      console.log(`Unable to create room. Showing lobby instead.`);
+      await this.joinLobbyRoom();
     }
   }
 }

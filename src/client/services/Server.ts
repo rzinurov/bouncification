@@ -11,6 +11,7 @@ enum Events {
   PlayerLeft = "player-left",
   PlayerStateChanged = "player-state-changed",
   LeaderboardChanged = "leaderboard-changed",
+  RoomsChanged = "rooms-changed",
   Disconnected = "disconnected",
 }
 
@@ -23,6 +24,7 @@ export default class Server {
   private client!: Colyseus.Client;
   private events: Phaser.Events.EventEmitter;
   private room!: Colyseus.Room<SingleHoopState>;
+  private rooms: { [name: string]: Colyseus.RoomAvailable } = {};
 
   constructor() {
     this.client = new Colyseus.Client(SERVER_ADDRESS);
@@ -64,6 +66,29 @@ export default class Server {
     this.registerRoomStateListeners();
 
     return this.room.id;
+  }
+
+  async joinLobby() {
+    this.room = await this.client.joinOrCreate<SingleHoopState>(Rooms.Lobby);
+
+    console.log("joined lobby", this.room);
+
+    this.room.onMessage("rooms", (rooms) => {
+      rooms.forEach((room) => {
+        this.rooms[room.roomId] = room;
+      });
+      this.events.emit(Events.RoomsChanged, this.rooms);
+    });
+
+    this.room.onMessage("+", ([roomId, room]) => {
+      this.rooms[roomId] = room;
+      this.events.emit(Events.RoomsChanged, this.rooms);
+    });
+
+    this.room.onMessage("-", (roomId) => {
+      delete this.rooms[roomId];
+      this.events.emit(Events.RoomsChanged, this.rooms);
+    });
   }
 
   private registerRoomStateListeners() {
@@ -176,6 +201,10 @@ export default class Server {
 
   jump({ x, y }: { x: number; y: number }) {
     this.room.send("jump", { x, y });
+  }
+
+  onRoomsChanged(cb: (rooms: Colyseus.RoomAvailable[]) => void, context?: any) {
+    this.events.on(Events.RoomsChanged, cb, context);
   }
 
   removeAllListeners() {

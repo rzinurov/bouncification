@@ -13,7 +13,7 @@ export default class Hoop extends Phaser.GameObjects.Container {
       .setInteractive({ useHandCursor: true });
 
     this.text = this.scene.add
-      .bitmapText(0, 0, Fonts.Pixel, "CONNECT", 32)
+      .bitmapText(0, 0, Fonts.Pixel, text, 32)
       .setTint(0x000000)
       .setOrigin(0.5, 0.5);
 

@@ -1,4 +1,5 @@
 enum Rooms {
+  Lobby = "lobby",
   SingleHoop = "single-hoop",
 }
 

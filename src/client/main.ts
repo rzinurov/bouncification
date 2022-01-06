@@ -1,12 +1,12 @@
-import Phaser from "phaser";
-import "regenerator-runtime/runtime";
-
-import SingleHoopScene from "./scenes/singlehoop/SingleHoopScene";
-import BootstrapScene from "./scenes/BootstrapScene";
 import WorldConfig from "common/consts/WorldConfig";
+import Phaser from "phaser";
+import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
+import "regenerator-runtime/runtime";
+import BootstrapScene from "./scenes/BootstrapScene";
+import LobbyScene from "./scenes/LobbyScene";
 import MenuScene from "./scenes/MenuScene";
 import PreloaderScene from "./scenes/PreloaderScene";
-import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin.js";
+import SingleHoopScene from "./scenes/singlehoop/SingleHoopScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -20,7 +20,13 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: /localhost/.test(window.location.host),
     },
   },
-  scene: [BootstrapScene, PreloaderScene, MenuScene, SingleHoopScene],
+  scene: [
+    BootstrapScene,
+    LobbyScene,
+    MenuScene,
+    PreloaderScene,
+    SingleHoopScene,
+  ],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
