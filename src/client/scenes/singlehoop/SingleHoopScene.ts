@@ -1,3 +1,4 @@
+import Fonts from "client/consts/Fonts";
 import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
@@ -16,6 +17,7 @@ export enum SingleHoopSceneEvents {
 export default class SingleHoopScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
   trace?: Aim;
+  connectingLabel!: Phaser.GameObjects.BitmapText;
 
   constructor() {
     super(Scenes.SingleHoop);
@@ -23,12 +25,25 @@ export default class SingleHoopScene extends Phaser.Scene {
 
   async create(data: { server: Server; name: string }) {
     const { server } = data;
+    const screenWidth = this.cameras.main.width;
+    const screenHeight = this.cameras.main.height;
 
-    this.add.image(-400, 115, Sprites.SingleHoopPitch).setOrigin(0, 0);
+    this.connectingLabel = this.add
+      .bitmapText(
+        screenWidth / 2,
+        screenHeight / 2,
+        Fonts.Pixel,
+        "CONNECTING, PLEASE WAIT..",
+        32
+      )
+      .setTint(0xffffff)
+      .setOrigin(0.5, 0.5);
 
     const players: { [name: string]: Player } = {};
 
     server.onInitialState((state) => {
+      this.add.image(-400, 115, Sprites.SingleHoopPitch).setOrigin(0, 0);
+      this.connectingLabel.setVisible(false);
       new Hoop(this, state.hoop);
     });
 
@@ -83,17 +98,5 @@ export default class SingleHoopScene extends Phaser.Scene {
 
     const { width, height } = WorldConfig.bounds;
     this.matter.world.setBounds(0, 0, width, height);
-
-    try {
-      this.scene.setVisible(false);
-      await server.join(data.name);
-    } catch (e) {
-      this.events.emit(
-        SingleHoopSceneEvents.ConnectionError,
-        `unable to connect, please retry later`
-      );
-    } finally {
-      this.scene.setVisible(true);
-    }
   }
 }

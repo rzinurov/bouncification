@@ -23,9 +23,7 @@ export class OnJoin extends Command<
     const playerName = options.name.trim();
     this.world.addPlayer(
       sessionId,
-      playerName ? playerName.substring(0, 16) : "anonymous",
-      100 + Math.random() * 600,
-      100 + Math.random() * 200
+      playerName ? playerName.substring(0, 16) : "anonymous"
     );
   }
 }

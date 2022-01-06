@@ -76,7 +76,12 @@ export default class SingleHoopWorld {
     this.state.hoop.edgeOffset = edgeOffset;
   }
 
-  addPlayer(sessionId: string, name: string, x: number, y: number) {
+  addPlayer(sessionId: string, name: string) {
+    const x =
+      WorldConfig.bounds.width / 2 +
+      (Math.random() * WorldConfig.bounds.width) / 4;
+    const y = 100 + Math.random() * 200;
+
     const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
     player.label = sessionId;
     player.restitution = WorldConfig.player.restitution;

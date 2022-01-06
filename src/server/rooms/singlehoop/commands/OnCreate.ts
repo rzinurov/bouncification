@@ -14,19 +14,8 @@ export class OnCreate extends Command<SingleHoopRoom> {
   execute() {
     this.world.addHoop(100, 350);
 
-    this.world.addPlayer(
-      "bot_1",
-      "bot",
-      WorldConfig.bounds.width / 2 +
-        (Math.random() * WorldConfig.bounds.width) / 4,
-      100 + Math.random() * 200
-    );
+    this.world.addPlayer("bot_1", "bot");
 
-    this.world.addPlayer(
-      "bot_2",
-      "bot",
-      100 + Math.random() * 600,
-      100 + Math.random() * 200
-    );
+    this.world.addPlayer("bot_2", "bot");
   }
 }

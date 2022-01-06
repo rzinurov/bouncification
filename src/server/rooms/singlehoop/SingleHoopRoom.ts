@@ -22,7 +22,7 @@ export class SingleHoopRoom extends Room<SingleHoopState> {
       this.world.jump(client.sessionId, message);
     });
 
-    this.maxClients = 10;
+    this.maxClients = 8;
 
     this.dispatcher.dispatch(new OnCreate(this.world));
   }

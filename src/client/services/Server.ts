@@ -29,7 +29,29 @@ export default class Server {
     this.events = new Phaser.Events.EventEmitter();
   }
 
-  async join(name: string) {
+  async create(name: string) {
+    this.room = await this.client.create<SingleHoopState>(Rooms.SingleHoop, {
+      name,
+    });
+
+    console.log("created room", this.room);
+
+    this.registerRoomStateListeners();
+
+    return this.room.id;
+  }
+
+  async joinById(roomId: string, name: string) {
+    this.room = await this.client.joinById<SingleHoopState>(roomId, {
+      name,
+    });
+
+    console.log("joined room", this.room);
+
+    this.registerRoomStateListeners();
+  }
+
+  async joinOrCreate(name: string) {
     this.room = await this.client.joinOrCreate<SingleHoopState>(
       Rooms.SingleHoop,
       {
@@ -37,8 +59,14 @@ export default class Server {
       }
     );
 
-    console.log("joined room", this.room);
+    console.log("joined or created room", this.room);
 
+    this.registerRoomStateListeners();
+
+    return this.room.id;
+  }
+
+  private registerRoomStateListeners() {
     const playerSessionId = this.room.sessionId;
 
     this.room.state.players.onAdd = (
