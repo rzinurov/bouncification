@@ -225,4 +225,12 @@ export default class Player extends Phaser.Physics.Matter.Image {
   canJump() {
     return this.jumpTimeout === 0;
   }
+
+  onLeave() {
+    super.destroy();
+    this.aim.destroy();
+    this.shadow.destroy();
+    this.jumpTimeoutIndicator.destroy();
+    this.nameLabel.destroy();
+  }
 }

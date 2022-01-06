@@ -65,7 +65,7 @@ export default class SingleHoopScene extends Phaser.Scene {
     server.onPlayerLeft(({ sessionId, state }) => {
       console.log(state.name, "left");
 
-      players[sessionId].destroy();
+      players[sessionId].onLeave();
       delete players[sessionId];
     });
 
