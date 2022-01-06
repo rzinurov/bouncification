@@ -1,3 +1,4 @@
+import Layers from "client/consts/Layers";
 import PlayerPhysics from "common/physics/PlayerPhysics";
 import Phaser from "phaser";
 import Player from "./Player";
@@ -17,16 +18,19 @@ export default class Aim extends Phaser.GameObjects.Container {
     super(scene, 100, 100);
     this.player = player;
 
-    this.anchor = this.scene.add.circle(0, 0, 16, 0xffffff);
+    this.anchor = this.scene.add
+      .circle(0, 0, 16, 0xffffff)
+      .setDepth(Layers.Labels);
     this.add(this.anchor);
 
     this.cursorLine = this.scene.add
       .line(0, 0, 0, 0, 0, 0, 0xffffff)
       .setLineWidth(4)
-      .setOrigin(0, 0);
+      .setOrigin(0, 0)
+      .setDepth(Layers.Labels);
     this.add(this.cursorLine);
 
-    this.setAlpha(0.25).setVisible(false);
+    this.setAlpha(0.25).setVisible(false).setDepth(Layers.Labels);
     this.scene.add.existing(this);
 
     scene.input.on("pointerdown", (pointer: { x: any; y: any }) => {

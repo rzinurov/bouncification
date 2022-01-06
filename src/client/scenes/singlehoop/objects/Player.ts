@@ -1,4 +1,5 @@
 import Fonts from "client/consts/Fonts";
+import Layers from "client/consts/Layers";
 import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
@@ -26,28 +27,33 @@ export default class Player extends Phaser.Physics.Matter.Image {
 
     this.setCircle(WorldConfig.player.spriteSize / 2);
     this.setBounce(WorldConfig.player.restitution);
-    this.setDepth(1);
+    this.setDepth(Layers.Players);
 
     this.shadow = scene.add
       .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, 0x000000)
-      .setOrigin(0.5, 0.5);
+      .setOrigin(0.5, 0.5)
+      .setDepth(Layers.Back);
 
     this.scene.add.existing(this);
 
     this.aim = this.scene.add.group([], { classType: Phaser.GameObjects.Arc });
     for (let i = 0; i < 16; i++) {
-      this.aim.add(this.scene.add.circle(0, 0, 8, 0xffffff, 0.75 - i * 0.05));
+      const point = this.scene.add
+        .circle(0, 0, 8, 0xffffff, 0.75 - i * 0.05)
+        .setDepth(Layers.Labels);
+      this.aim.add(point);
     }
 
     this.nameLabel = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
       .setTint(isYou ? PLAYER_NAME_COLOR : DEFAULT_NAME_COLOR)
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setDepth(Layers.Labels);
 
     this.jumpTimeoutIndicator = this.scene.add
       .graphics()
       .setAlpha(0.75)
-      .setDepth(2);
+      .setDepth(Layers.Labels);
 
     this.updateState(state);
   }
@@ -174,7 +180,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.jumpTimeout -= dt;
     this.jumpTimeout = Math.max(this.jumpTimeout, 0);
 
-    if (this.canJump() || !this.isAiming()) {
+    if (this.canJump() || !this.aimVelocity) {
       this.jumpTimeoutIndicator.setVisible(false);
       return;
     }
@@ -188,7 +194,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
 
     this.jumpTimeoutIndicator
       .clear()
-      .lineStyle(6, color, 1)
+      .lineStyle(12, color, 1)
       .beginPath()
       .arc(
         position.x,

@@ -1,3 +1,4 @@
+import Layers from "client/consts/Layers";
 import WorldConfig from "common/consts/WorldConfig";
 import { HoopState } from "common/schema/HoopState";
 import { BodyType } from "matter";
@@ -45,14 +46,16 @@ export default class Hoop extends Phaser.GameObjects.Container {
 class Net extends Phaser.GameObjects.Container {
   columns: number = 9;
   rows: number = 6;
-  graphics: Phaser.GameObjects.Graphics;
-  frontParticles: BodyType[] = [];
+  backGraphics: Phaser.GameObjects.Graphics;
   backParticles: BodyType[] = [];
+  frontGraphics: Phaser.GameObjects.Graphics;
+  frontParticles: BodyType[] = [];
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
-    this.graphics = this.scene.add.graphics();
+    this.backGraphics = this.scene.add.graphics().setDepth(Layers.Back);
+    this.frontGraphics = this.scene.add.graphics().setDepth(Layers.Front);
 
     const frontCloth = this.createCloth(this.x, this.y, 22, false);
 
@@ -71,35 +74,50 @@ class Net extends Phaser.GameObjects.Container {
   }
 
   preUpdate() {
-    const drawParticle = (particle: BodyType, aplha: number) => {
-      this.graphics.beginPath();
-      this.graphics.fillStyle(0xbbbbbb, aplha);
-      this.graphics.fillCircle(particle.position.x, particle.position.y, 2);
-      this.graphics.fillPath();
+    const drawParticle = (
+      graphics: Phaser.GameObjects.Graphics,
+      particle: BodyType,
+      aplha: number
+    ) => {
+      graphics.beginPath();
+      graphics.fillStyle(0xbbbbbb, aplha);
+      graphics.fillCircle(particle.position.x, particle.position.y, 2);
+      graphics.fillPath();
     };
 
-    const drawLine = (p1: BodyType, p2: BodyType, aplha: number) => {
-      this.graphics.beginPath();
-      this.graphics.lineStyle(3, 0xbbbbbb, aplha);
-      this.graphics.lineBetween(
+    const drawLine = (
+      graphics: Phaser.GameObjects.Graphics,
+      p1: BodyType,
+      p2: BodyType,
+      aplha: number
+    ) => {
+      graphics.beginPath();
+      graphics.lineStyle(3, 0xbbbbbb, aplha);
+      graphics.lineBetween(
         p1.position.x,
         p1.position.y,
         p2.position.x,
         p2.position.y
       );
-      this.graphics.strokePath();
+      graphics.strokePath();
     };
 
-    const drawParticles = (particles, alpha: number) => {
+    const drawParticles = (
+      graphics: Phaser.GameObjects.Graphics,
+      particles: any[],
+      alpha: number
+    ) => {
+      graphics.clear();
       for (let i = 0; i < particles.length; i++) {
         const column = i % this.columns;
         const row = Math.floor(i / this.columns);
-        drawParticle(particles[i], alpha);
+        drawParticle(graphics, particles[i], alpha);
         if (column > 0 && column < this.columns) {
-          drawLine(particles[i], particles[i - 1], alpha);
+          drawLine(graphics, particles[i], particles[i - 1], alpha);
         }
         if (row > 0) {
           drawLine(
+            graphics,
             particles[i],
             particles[(row - 1) * this.columns + column],
             alpha
@@ -108,9 +126,8 @@ class Net extends Phaser.GameObjects.Container {
       }
     };
 
-    this.graphics.clear();
-    drawParticles(this.frontParticles, 0.5);
-    drawParticles(this.backParticles, 0.25);
+    drawParticles(this.backGraphics, this.backParticles, 0.25);
+    drawParticles(this.frontGraphics, this.frontParticles, 0.5);
   }
 
   private createCloth(
