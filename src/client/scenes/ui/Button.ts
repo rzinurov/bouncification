@@ -5,11 +5,18 @@ export default class Hoop extends Phaser.GameObjects.Container {
   rect: Phaser.GameObjects.Rectangle;
   text: Phaser.GameObjects.BitmapText;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, text: string) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    text: string,
+    width: number = 320,
+    height: number = 96
+  ) {
     super(scene, x, y);
 
     this.rect = this.scene.add
-      .rectangle(0, 0, 320, 96, 0xdddddd, 0.75)
+      .rectangle(0, 0, width, height, 0xdddddd, 0.75)
       .setInteractive({ useHandCursor: true });
 
     this.text = this.scene.add
@@ -24,5 +31,9 @@ export default class Hoop extends Phaser.GameObjects.Container {
 
   onClick(fn: () => void) {
     this.rect.on("pointerup", fn);
+  }
+
+  setText(text: string) {
+    return this.text.setText(text);
   }
 }

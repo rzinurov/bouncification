@@ -34,7 +34,8 @@ export default class LobbyScene extends Phaser.Scene {
       this,
       width / 2,
       height / 2,
-      "NEW ROOM"
+      "CREATE ROOM",
+      width * 0.5
     );
     createRoomButton.onClick(() => {
       this.events.emit(LobbySceneEvents.CreateButtonClicked);
@@ -48,17 +49,28 @@ export default class LobbyScene extends Phaser.Scene {
         }
       });
       Object.keys(rooms).forEach((roomId) => {
+        const clients = rooms[roomId].clients;
+        const maxClients = rooms[roomId].maxClients;
+        const labelText = `${roomId} ${clients}/${maxClients}`;
         if (!Object.keys(this.roomButtons).includes(roomId)) {
-          const button = new Button(this, width / 2, height / 2, roomId);
+          const button = new Button(
+            this,
+            width / 2,
+            height / 2,
+            labelText,
+            width * 0.5
+          );
           button.onClick(() => {
             this.events.emit(LobbySceneEvents.JoinButtonClicked, roomId);
           });
           this.roomButtons[roomId] = button;
           this.add.existing(button);
+        } else {
+          this.roomButtons[roomId].setText(labelText);
         }
       });
       Object.values(this.roomButtons).forEach((button, idx) => {
-        button.y = height / 2 + (idx + 1) * 100;
+        button.y = height / 2 + 16 + (idx + 1) * 100;
       });
     });
   }
