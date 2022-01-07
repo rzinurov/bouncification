@@ -49,9 +49,11 @@ export default class LobbyScene extends Phaser.Scene {
         }
       });
       Object.keys(rooms).forEach((roomId) => {
-        const clients = rooms[roomId].clients;
-        const maxClients = rooms[roomId].maxClients;
-        const labelText = `${roomId} ${clients}/${maxClients}`;
+        const room = rooms[roomId];
+        const clients = room.clients;
+        const maxClients = room.maxClients;
+        const ownerName = room.metadata.ownerName;
+        const labelText = `${ownerName} ${clients}/${maxClients}`;
         if (!Object.keys(this.roomButtons).includes(roomId)) {
           const button = new Button(
             this,

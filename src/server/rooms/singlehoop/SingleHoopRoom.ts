@@ -1,5 +1,5 @@
 import { Dispatcher } from "@colyseus/command";
-import { Client, Room } from "colyseus";
+import { Client, Room, updateLobby } from "colyseus";
 import { SingleHoopState as SingleHoopState } from "common/schema/SingleHoopState";
 import { OnCreate } from "./commands/OnCreate";
 import { OnJoin } from "./commands/OnJoin";
@@ -10,8 +10,14 @@ export class SingleHoopRoom extends Room<SingleHoopState> {
   dispatcher = new Dispatcher(this);
   world!: SingleHoopWorld;
 
-  onCreate(options: any) {
+  onCreate(options: { name: string }) {
     this.setState(new SingleHoopState());
+
+    const playerName = options.name?.trim();
+
+    this.setMetadata({
+      ownerName: playerName ? playerName.substring(0, 16) : "anonymous",
+    }).then(() => updateLobby(this));
 
     this.world = new SingleHoopWorld(this.state);
 
