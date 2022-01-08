@@ -6,11 +6,15 @@ import { PlayerState } from "common/schema/PlayerState";
 import { PositionState } from "common/schema/Primitives";
 import { GameState } from "common/schema/GameState";
 
+const HOOP_BOTTOM_HIT_TIMEOUT = 3000;
 export default class GameWorld {
   engine: Matter.Engine;
   state: GameState;
   players: {
     [name: string]: Body;
+  } = {};
+  hoopBottomSensorHits: {
+    [name: string]: number;
   } = {};
 
   constructor(state: GameState) {
@@ -43,7 +47,7 @@ export default class GameWorld {
       edgeConfig.size / 2
     );
 
-    const scoreSensorBody = Bodies.circle(
+    const hoopSensorBody = Bodies.circle(
       x + edgeOffset.x / 2,
       y + edgeOffset.y + 32,
       8,
@@ -52,20 +56,36 @@ export default class GameWorld {
         isSensor: true,
       }
     );
-    scoreSensorBody.label = "score_sensor";
+    hoopSensorBody.label = "hoop_sensor";
+
+    const hoopBottomSensorBody = Bodies.circle(
+      x + edgeOffset.x / 2,
+      y + edgeOffset.y + 64,
+      8,
+      {
+        isStatic: true,
+        isSensor: true,
+      }
+    );
+    hoopBottomSensorBody.label = "hoop_bottom_sensor";
 
     Events.on(this.engine, "collisionStart", (event) => {
       event.pairs.forEach((pair) => {
-        if (pair.bodyA.label === scoreSensorBody.label) {
+        if (pair.bodyA.label === hoopSensorBody.label) {
           this.onScoreSensorHit(pair.bodyB);
-        } else if (pair.bodyB.label === scoreSensorBody.label) {
+        } else if (pair.bodyB.label === hoopSensorBody.label) {
           this.onScoreSensorHit(pair.bodyA);
+        }
+        if (pair.bodyA.label === hoopBottomSensorBody.label) {
+          this.onScoreBottomSensorHit(pair.bodyB);
+        } else if (pair.bodyB.label === hoopBottomSensorBody.label) {
+          this.onScoreBottomSensorHit(pair.bodyA);
         }
       });
     });
 
     const hoop = Body.create({
-      parts: [backboardBody, edgeBody, scoreSensorBody],
+      parts: [backboardBody, edgeBody, hoopSensorBody, hoopBottomSensorBody],
       isStatic: true,
     });
 
@@ -122,7 +142,16 @@ export default class GameWorld {
 
   private onScoreSensorHit(body: Body) {
     if (this.players[body.label]) {
-      this.increaseScore(body.label, 1);
+      const lastHoopBottomHit = this.hoopBottomSensorHits[body.label] || 0;
+      if (lastHoopBottomHit < new Date().getTime() - HOOP_BOTTOM_HIT_TIMEOUT) {
+        this.increaseScore(body.label, 1);
+      }
+    }
+  }
+
+  private onScoreBottomSensorHit(body: Body) {
+    if (this.players[body.label]) {
+      this.hoopBottomSensorHits[body.label] = new Date().getTime();
     }
   }
 
