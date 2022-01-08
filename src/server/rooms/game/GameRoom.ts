@@ -1,17 +1,17 @@
 import { Dispatcher } from "@colyseus/command";
 import { Client, Room, updateLobby } from "colyseus";
-import { SingleHoopState as SingleHoopState } from "common/schema/SingleHoopState";
+import { GameState as GameState } from "common/schema/GameState";
 import { OnCreate } from "./commands/OnCreate";
 import { OnJoin } from "./commands/OnJoin";
 import { OnLeave } from "./commands/OnLeave";
-import SingleHoopWorld from "./SingleHoopWorld";
+import GameWorld from "./GameWorld";
 
-export class SingleHoopRoom extends Room<SingleHoopState> {
+export class GameRoom extends Room<GameState> {
   dispatcher = new Dispatcher(this);
-  world!: SingleHoopWorld;
+  world!: GameWorld;
 
   onCreate(options: { name: string }) {
-    this.setState(new SingleHoopState());
+    this.setState(new GameState());
 
     const playerName = options.name?.trim();
 
@@ -19,7 +19,7 @@ export class SingleHoopRoom extends Room<SingleHoopState> {
       ownerName: playerName ? playerName.substring(0, 16) : "anonymous",
     }).then(() => updateLobby(this));
 
-    this.world = new SingleHoopWorld(this.state);
+    this.world = new GameWorld(this.state);
 
     this.setPatchRate(1000 / 20);
     this.setSimulationInterval((dt) => this.update(dt));

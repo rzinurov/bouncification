@@ -1,14 +1,14 @@
 import { Command } from "@colyseus/command";
-import SingleHoopWorld from "server/rooms/singlehoop/SingleHoopWorld";
-import { SingleHoopRoom } from "server/rooms/singlehoop/SingleHoopRoom";
+import GameWorld from "server/rooms/game/GameWorld";
+import { GameRoom } from "server/rooms/game/GameRoom";
 
 export class OnJoin extends Command<
-  SingleHoopRoom,
+  GameRoom,
   { sessionId: string; options: { name: string } }
 > {
-  world!: SingleHoopWorld;
+  world!: GameWorld;
 
-  constructor(world: SingleHoopWorld) {
+  constructor(world: GameWorld) {
     super();
     this.world = world;
   }

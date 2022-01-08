@@ -1,6 +1,6 @@
 enum Rooms {
   Lobby = "lobby",
-  SingleHoop = "single-hoop",
+  Game = "game",
 }
 
 export default Rooms;

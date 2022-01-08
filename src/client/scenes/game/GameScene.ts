@@ -1,3 +1,4 @@
+import Layers from "client/consts/Layers";
 import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
@@ -8,12 +9,12 @@ import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
 import Leaderboard from "./ui/Leaderboard";
 
-export default class SingleHoopScene extends Phaser.Scene {
+export default class GameScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
   trace?: Aim;
 
   constructor() {
-    super(Scenes.SingleHoop);
+    super(Scenes.Game);
   }
 
   async create(data: { server: Server; name: string }) {
@@ -22,7 +23,10 @@ export default class SingleHoopScene extends Phaser.Scene {
     const players: { [name: string]: Player } = {};
 
     server.onInitialState((state) => {
-      this.add.image(-400, 115, Sprites.SingleHoopPitch).setOrigin(0, 0);
+      this.add
+        .image(-400, 880, Sprites.Floor)
+        .setDepth(Layers.Back)
+        .setOrigin(0, 0);
       new Hoop(this, state.hoop);
     });
 

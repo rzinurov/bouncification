@@ -1,4 +1,5 @@
 import Layers from "client/consts/Layers";
+import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
 import { HoopState } from "common/schema/HoopState";
 import { BodyType } from "matter";
@@ -7,6 +8,15 @@ import Phaser from "phaser";
 export default class Hoop extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, state: HoopState) {
     super(scene, 0, 0);
+
+    this.scene.add
+      .image(-8, 115, Sprites.Hoop)
+      .setOrigin(0, 0)
+      .setDepth(Layers.Back);
+    this.scene.add
+      .image(24, 183, Sprites.HoopFront)
+      .setOrigin(0, 0)
+      .setDepth(Layers.Front);
 
     const backboardConfig = WorldConfig.hoop.backboard;
     const edgeConfig = WorldConfig.hoop.edge;

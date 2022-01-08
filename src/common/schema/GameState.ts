@@ -4,7 +4,7 @@ import { LeaderboardRowState } from "./LeaderboardRowState";
 import { PlayerState } from "./PlayerState";
 import { PositionState } from "./Primitives";
 
-export class SingleHoopState extends Schema {
+export class GameState extends Schema {
   @type({ map: PlayerState })
   players = new MapSchema<PlayerState>();
 

@@ -3,7 +3,7 @@ enum Scenes {
   Lobby = "lobby",
   Menu = "menu",
   Preloader = "preloader",
-  SingleHoop = "single-hoop",
+  Game = "game",
 }
 
 export default Scenes;

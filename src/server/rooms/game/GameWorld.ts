@@ -4,16 +4,16 @@ import PlayerPhysics from "common/physics/PlayerPhysics";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import { PlayerState } from "common/schema/PlayerState";
 import { PositionState } from "common/schema/Primitives";
-import { SingleHoopState } from "common/schema/SingleHoopState";
+import { GameState } from "common/schema/GameState";
 
-export default class SingleHoopWorld {
+export default class GameWorld {
   engine: Matter.Engine;
-  state: SingleHoopState;
+  state: GameState;
   players: {
     [name: string]: Body;
   } = {};
 
-  constructor(state: SingleHoopState) {
+  constructor(state: GameState) {
     this.state = state;
     this.engine = Engine.create();
     this.engine.enableSleeping = true;

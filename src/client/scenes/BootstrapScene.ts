@@ -1,6 +1,5 @@
 import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
-import Rooms from "common/consts/Rooms";
 import Phaser from "phaser";
 import { LobbySceneEvents } from "./LobbyScene";
 import { MenuSceneEvents } from "./MenuScene";
@@ -43,30 +42,30 @@ export default class BootstrapScene extends Phaser.Scene {
     this.scene.stop(Scenes.Menu);
     const roomId = window.location.hash?.substring(1);
     if (roomId) {
-      await this.joinSingleHoopRoom(roomId);
+      await this.joinGameRoom(roomId);
     } else {
       await this.joinLobbyRoom();
     }
   }
 
-  private async joinSingleHoopRoom(roomId: string) {
+  private async joinGameRoom(roomId: string) {
     this.server.removeAllListeners();
     window.location.hash = roomId;
 
-    this.scene.start(Scenes.SingleHoop, {
+    this.scene.start(Scenes.Game, {
       server: this.server,
       name: this.name,
     });
 
     this.server.onDisconnected(() => {
-      this.scene.stop(Scenes.SingleHoop);
+      this.scene.stop(Scenes.Game);
       this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
     try {
       await this.server.joinById(roomId, this.name);
     } catch (e) {
-      this.scene.stop(Scenes.SingleHoop);
+      this.scene.stop(Scenes.Game);
       console.log(`Unable to join room ${roomId}. Showing lobby instead.`);
       await this.joinLobbyRoom();
     }
@@ -84,15 +83,15 @@ export default class BootstrapScene extends Phaser.Scene {
       .get(Scenes.Lobby)
       .events.on(LobbySceneEvents.CreateButtonClicked, async () => {
         this.scene.stop(Scenes.Lobby);
-        await this.createSingleHoopRoom();
+        await this.createGameRoom();
       })
       .on(LobbySceneEvents.JoinButtonClicked, async (roomId: string) => {
         this.scene.stop(Scenes.Lobby);
-        await this.joinSingleHoopRoom(roomId);
+        await this.joinGameRoom(roomId);
       });
 
     this.server.onDisconnected(() => {
-      this.scene.stop(Scenes.SingleHoop);
+      this.scene.stop(Scenes.Game);
       this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
@@ -106,16 +105,16 @@ export default class BootstrapScene extends Phaser.Scene {
     }
   }
 
-  private async createSingleHoopRoom() {
+  private async createGameRoom() {
     this.server.removeAllListeners();
 
-    this.scene.start(Scenes.SingleHoop, {
+    this.scene.start(Scenes.Game, {
       server: this.server,
       name: this.name,
     });
 
     this.server.onDisconnected(() => {
-      this.scene.stop(Scenes.SingleHoop);
+      this.scene.stop(Scenes.Game);
       this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
@@ -123,7 +122,7 @@ export default class BootstrapScene extends Phaser.Scene {
       const roomId = await this.server.create(this.name);
       window.location.hash = roomId;
     } catch (e) {
-      this.scene.stop(Scenes.SingleHoop);
+      this.scene.stop(Scenes.Game);
       console.log(`Unable to create room. Showing lobby instead.`);
       await this.joinLobbyRoom();
     }

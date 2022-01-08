@@ -3,18 +3,17 @@ import { monitor } from "@colyseus/monitor";
 import { LobbyRoom } from "colyseus";
 import Rooms from "common/consts/Rooms";
 import * as express from "express";
-
 /**
  * Import your Room files
  */
-import { SingleHoopRoom } from "server/rooms/singlehoop/SingleHoopRoom";
+import { GameRoom } from "server/rooms/game/GameRoom";
 
 export default Arena({
   getId: () => "Bouncification",
 
   initializeGameServer: (gameServer) => {
     gameServer.define(Rooms.Lobby, LobbyRoom);
-    gameServer.define(Rooms.SingleHoop, SingleHoopRoom).enableRealtimeListing();
+    gameServer.define(Rooms.Game, GameRoom).enableRealtimeListing();
   },
 
   initializeExpress: (app) => {

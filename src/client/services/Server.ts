@@ -1,6 +1,6 @@
 import * as Colyseus from "colyseus.js";
 import Rooms from "common/consts/Rooms";
-import type { SingleHoopState } from "common/schema/SingleHoopState";
+import type { GameState as GameState } from "common/schema/GameState";
 import type { PlayerState } from "common/schema/PlayerState";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 
@@ -23,7 +23,7 @@ console.log("Server address", SERVER_ADDRESS);
 export default class Server {
   private client!: Colyseus.Client;
   private events: Phaser.Events.EventEmitter;
-  private room!: Colyseus.Room<SingleHoopState>;
+  private room!: Colyseus.Room<GameState>;
   private rooms: { [name: string]: Colyseus.RoomAvailable } = {};
 
   constructor() {
@@ -32,7 +32,7 @@ export default class Server {
   }
 
   async create(name: string) {
-    this.room = await this.client.create<SingleHoopState>(Rooms.SingleHoop, {
+    this.room = await this.client.create<GameState>(Rooms.Game, {
       name,
     });
 
@@ -44,7 +44,7 @@ export default class Server {
   }
 
   async joinById(roomId: string, name: string) {
-    this.room = await this.client.joinById<SingleHoopState>(roomId, {
+    this.room = await this.client.joinById<GameState>(roomId, {
       name,
     });
 
@@ -54,12 +54,9 @@ export default class Server {
   }
 
   async joinOrCreate(name: string) {
-    this.room = await this.client.joinOrCreate<SingleHoopState>(
-      Rooms.SingleHoop,
-      {
-        name,
-      }
-    );
+    this.room = await this.client.joinOrCreate<GameState>(Rooms.Game, {
+      name,
+    });
 
     console.log("joined or created room", this.room);
 
@@ -69,7 +66,7 @@ export default class Server {
   }
 
   async joinLobby() {
-    this.room = await this.client.joinOrCreate<SingleHoopState>(Rooms.Lobby);
+    this.room = await this.client.joinOrCreate<GameState>(Rooms.Lobby);
 
     console.log("joined lobby", this.room);
 
@@ -156,7 +153,7 @@ export default class Server {
     });
   }
 
-  onInitialState(cb: (state: SingleHoopState) => void, context?: any) {
+  onInitialState(cb: (state: GameState) => void, context?: any) {
     this.events.on(Events.InitialState, cb, context);
   }
 

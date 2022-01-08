@@ -1,7 +1,8 @@
 enum Sprites {
   Ball = "ball",
-  SingleHoopPitch = "single-hoop-pitch",
-  ChainLink = "chain-link",
+  Floor = "floor",
+  Hoop = "hoop",
+  HoopFront = "hoop-front",
 }
 
 export default Sprites;

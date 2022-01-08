@@ -6,7 +6,7 @@ import BootstrapScene from "./scenes/BootstrapScene";
 import LobbyScene from "./scenes/LobbyScene";
 import MenuScene from "./scenes/MenuScene";
 import PreloaderScene from "./scenes/PreloaderScene";
-import SingleHoopScene from "./scenes/singlehoop/SingleHoopScene";
+import GameScene from "./scenes/game/GameScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -20,13 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: /localhost/.test(window.location.host),
     },
   },
-  scene: [
-    BootstrapScene,
-    LobbyScene,
-    MenuScene,
-    PreloaderScene,
-    SingleHoopScene,
-  ],
+  scene: [BootstrapScene, LobbyScene, MenuScene, PreloaderScene, GameScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
