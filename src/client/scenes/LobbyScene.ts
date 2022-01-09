@@ -2,7 +2,9 @@ import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
+import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
+import GameWorld from "../../../dist/server/server/rooms/game/GameWorld";
 import Button from "./ui/Button";
 
 export enum LobbySceneEvents {
@@ -13,6 +15,7 @@ export enum LobbySceneEvents {
 export default class LobbyScene extends Phaser.Scene {
   server!: Server;
   roomButtons: { [name: string]: Button } = {};
+  connectingLabel!: Phaser.GameObjects.BitmapText;
 
   constructor() {
     super(Scenes.Lobby);
@@ -42,16 +45,16 @@ export default class LobbyScene extends Phaser.Scene {
       .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
-    const createRoomButton = new Button(
-      this,
-      width / 2,
-      height / 2,
-      "CREATE ROOM",
-      width * 0.5
-    );
-    createRoomButton.onClick(() => {
-      this.events.emit(LobbySceneEvents.CreateButtonClicked);
-    });
+    this.connectingLabel = this.add
+      .bitmapText(
+        WorldConfig.bounds.width / 2,
+        WorldConfig.bounds.height * 0.6,
+        Fonts.Pixel,
+        "connecting to server..",
+        32
+      )
+      .setTint(Colors.Color2)
+      .setOrigin(0.5, 0.5);
 
     this.server.onRoomsChanged((rooms) => {
       Object.keys(this.roomButtons).forEach((roomId) => {
@@ -86,6 +89,19 @@ export default class LobbyScene extends Phaser.Scene {
       Object.values(this.roomButtons).forEach((button, idx) => {
         button.y = height / 2 + 16 + (idx + 1) * 100;
       });
+      if (this.connectingLabel.visible) {
+        this.connectingLabel.setVisible(false);
+        const createRoomButton = new Button(
+          this,
+          width / 2,
+          height / 2,
+          "CREATE ROOM",
+          width * 0.5
+        );
+        createRoomButton.onClick(() => {
+          this.events.emit(LobbySceneEvents.CreateButtonClicked);
+        });
+      }
     });
   }
 }
