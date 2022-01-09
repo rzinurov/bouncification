@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Phaser from "phaser";
 
@@ -16,12 +17,12 @@ export default class Hoop extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.rect = this.scene.add
-      .rectangle(0, 0, width, height, 0xdddddd, 0.75)
+      .rectangle(0, 0, width, height, Colors.Color5, 0.75)
       .setInteractive({ useHandCursor: true });
 
     this.text = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, text, 32)
-      .setTint(0x000000)
+      .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
     this.add(this.rect).add(this.text);

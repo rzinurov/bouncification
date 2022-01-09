@@ -4,6 +4,7 @@ import Phaser from "phaser";
 import Button from "./ui/Button";
 import InputText from "phaser3-rex-plugins/plugins/inputtext.js";
 import Names from "client/utils/Names";
+import Colors from "client/consts/Colors";
 
 export enum MenuSceneEvents {
   ConnectButtonClicked = "connect-button-clicked",
@@ -28,7 +29,7 @@ export default class MenuScene extends Phaser.Scene {
 
     this.add
       .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(0xffffff)
+      .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -39,7 +40,7 @@ export default class MenuScene extends Phaser.Scene {
         "A MULTIPLAYER GAME WITH BOUNCING BALLS",
         24
       )
-      .setTint(0xffffff)
+      .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -48,27 +49,26 @@ export default class MenuScene extends Phaser.Scene {
         height / 2 - 120,
         Fonts.Pixel,
         "ENTER YOUR NAME",
-        40
+        43
       )
-      .setTint(0xffffff)
+      .setTint(Colors.Color2)
       .setOrigin(0.5, 0.5);
 
-    let playerName = window.localStorage.getItem(LS_PLAYER_NAME);
+    const playerName = window.localStorage.getItem(LS_PLAYER_NAME);
 
     const nameInput = new InputText(
       this,
       width / 2,
       height / 2,
       width / 2,
-      128,
+      112,
       {
         text: playerName ? playerName : Names.randomName(),
         maxLength: 16,
         fontSize: "64",
         align: "center",
-        color: "#ffffff",
-        backgroundColor: "#222222",
-        borderColor: "#ffffff",
+        color: Colors.getHex(Colors.Color1),
+        backgroundColor: Colors.getHex(Colors.Color5),
       }
     );
     this.add.existing(nameInput);

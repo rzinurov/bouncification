@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
@@ -27,7 +28,7 @@ export default class LobbyScene extends Phaser.Scene {
 
     this.add
       .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(0xffffff)
+      .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -38,7 +39,7 @@ export default class LobbyScene extends Phaser.Scene {
         "A MULTIPLAYER GAME WITH BOUNCING BALLS",
         24
       )
-      .setTint(0xffffff)
+      .setTint(Colors.Color1)
       .setOrigin(0.5, 0.5);
 
     const createRoomButton = new Button(
