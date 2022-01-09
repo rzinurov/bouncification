@@ -141,7 +141,8 @@ export default class GameWorld {
   }
 
   private onScoreSensorHit(body: Body) {
-    if (this.players[body.label]) {
+    const playerBody = this.players[body.label];
+    if (playerBody && playerBody.velocity.y >= 0) {
       const lastHoopBottomHit = this.hoopBottomSensorHits[body.label] || 0;
       if (lastHoopBottomHit < new Date().getTime() - HOOP_BOTTOM_HIT_TIMEOUT) {
         this.increaseScore(body.label, 1);
