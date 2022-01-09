@@ -3,10 +3,6 @@ import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
 import Phaser from "phaser";
 
-export enum PreloaderSceneEvents {
-  Loaded = "loaded",
-}
-
 export default class PreloaderScene extends Phaser.Scene {
   private progressContainer!: Phaser.GameObjects.Graphics;
   private progressBar!: Phaser.GameObjects.Graphics;
@@ -47,6 +43,7 @@ export default class PreloaderScene extends Phaser.Scene {
       "assets/fonts/pixel.xml"
     );
 
+    this.load.image(Sprites.Star, "assets/img/star.png");
     this.load.image(Sprites.Ball, "assets/img/ball.png");
     this.load.image(Sprites.Floor, "assets/img/floor.png");
     this.load.image(Sprites.Hoop, "assets/img/hoop.png");
@@ -54,6 +51,6 @@ export default class PreloaderScene extends Phaser.Scene {
   }
 
   create() {
-    this.events.emit(PreloaderSceneEvents.Loaded);
+    this.scene.start(Scenes.Bootstrap);
   }
 }

@@ -20,7 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: /localhost/.test(window.location.host),
     },
   },
-  scene: [BootstrapScene, LobbyScene, MenuScene, PreloaderScene, GameScene],
+  scene: [PreloaderScene, BootstrapScene, LobbyScene, MenuScene, GameScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,

@@ -26,7 +26,18 @@ export default class LobbyScene extends Phaser.Scene {
     const height = this.cameras.main.height;
 
     this.add
-      .bitmapText(width / 2, 128, Fonts.Pixel, "LOBBY", 48)
+      .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
+      .setTint(0xffffff)
+      .setOrigin(0.5, 0.5);
+
+    this.add
+      .bitmapText(
+        width / 2,
+        216,
+        Fonts.Pixel,
+        "A MULTIPLAYER GAME WITH BOUNCING BALLS",
+        24
+      )
       .setTint(0xffffff)
       .setOrigin(0.5, 0.5);
 

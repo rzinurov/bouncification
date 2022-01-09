@@ -3,6 +3,7 @@ enum Sprites {
   Floor = "floor",
   Hoop = "hoop",
   HoopFront = "hoop-front",
+  Star = "star",
 }
 
 export default Sprites;

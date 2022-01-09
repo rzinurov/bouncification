@@ -1,9 +1,10 @@
 import Scenes from "client/consts/Scenes";
+import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
+import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
 import { LobbySceneEvents } from "./LobbyScene";
 import { MenuSceneEvents } from "./MenuScene";
-import { PreloaderSceneEvents } from "./PreloaderScene";
 
 export default class BootstrapScene extends Phaser.Scene {
   private server!: Server;
@@ -18,13 +19,50 @@ export default class BootstrapScene extends Phaser.Scene {
   }
 
   async create() {
-    this.scene
-      .get(Scenes.Preloader)
-      .events.on(PreloaderSceneEvents.Loaded, () => {
-        this.scene.stop(Scenes.Preloader);
-        this.scene.launch(Scenes.Menu);
-      });
+    const offScreen = new Phaser.Geom.Rectangle(
+      -400,
+      0,
+      400,
+      WorldConfig.bounds.height
+    );
+    const screen = new Phaser.Geom.Rectangle(
+      0,
+      0,
+      WorldConfig.bounds.width,
+      WorldConfig.bounds.height
+    );
 
+    this.add.particles(Sprites.Star, [
+      {
+        emitZone: { source: offScreen },
+        deathZone: { source: screen, type: "onLeave" },
+        frequency: 100,
+        quantity: 25,
+        speedX: { min: 80, max: 120 },
+        lifespan: 30000,
+        scale: 0.25,
+      },
+      {
+        emitZone: { source: offScreen },
+        deathZone: { source: screen, type: "onLeave" },
+        frequency: 150,
+        quantity: 25,
+        speedX: { min: 180, max: 220 },
+        lifespan: 30000,
+        scale: 0.5,
+      },
+      {
+        emitZone: { source: offScreen },
+        deathZone: { source: screen, type: "onLeave" },
+        frequency: 500,
+        quantity: 25,
+        speedX: { min: 280, max: 320 },
+        lifespan: 30000,
+        scale: 0.75,
+      },
+    ]);
+
+    this.scene.launch(Scenes.Menu);
     this.scene
       .get(Scenes.Menu)
       .events.on(
@@ -33,8 +71,6 @@ export default class BootstrapScene extends Phaser.Scene {
           await this.connect(data);
         }
       );
-
-    this.scene.launch(Scenes.Preloader);
   }
 
   private async connect(data: { name: string }) {
@@ -52,14 +88,14 @@ export default class BootstrapScene extends Phaser.Scene {
     this.server.removeAllListeners();
     window.location.hash = roomId;
 
-    this.scene.start(Scenes.Game, {
+    this.scene.launch(Scenes.Game, {
       server: this.server,
       name: this.name,
     });
 
     this.server.onDisconnected(() => {
       this.scene.stop(Scenes.Game);
-      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+      this.scene.launch(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
     try {
@@ -75,7 +111,7 @@ export default class BootstrapScene extends Phaser.Scene {
     this.server.removeAllListeners();
     window.location.hash = "";
 
-    this.scene.start(Scenes.Lobby, {
+    this.scene.launch(Scenes.Lobby, {
       server: this.server,
     });
 
@@ -92,14 +128,14 @@ export default class BootstrapScene extends Phaser.Scene {
 
     this.server.onDisconnected(() => {
       this.scene.stop(Scenes.Game);
-      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+      this.scene.launch(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
     try {
       await this.server.joinLobby();
     } catch (e) {
       this.scene.stop(Scenes.Lobby);
-      this.scene.start(Scenes.Menu, {
+      this.scene.launch(Scenes.Menu, {
         errorMessage: "unable to connect, please retry later",
       });
     }
@@ -108,14 +144,14 @@ export default class BootstrapScene extends Phaser.Scene {
   private async createGameRoom() {
     this.server.removeAllListeners();
 
-    this.scene.start(Scenes.Game, {
+    this.scene.launch(Scenes.Game, {
       server: this.server,
       name: this.name,
     });
 
     this.server.onDisconnected(() => {
       this.scene.stop(Scenes.Game);
-      this.scene.start(Scenes.Menu, { errorMessage: "disconnected" });
+      this.scene.launch(Scenes.Menu, { errorMessage: "disconnected" });
     });
 
     try {
