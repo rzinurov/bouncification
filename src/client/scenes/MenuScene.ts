@@ -29,7 +29,7 @@ export default class MenuScene extends Phaser.Scene {
 
     this.add
       .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(Colors.Color1)
+      .setTint(Colors.Orange3)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -40,7 +40,7 @@ export default class MenuScene extends Phaser.Scene {
         "A MULTIPLAYER GAME WITH BOUNCING BALLS",
         24
       )
-      .setTint(Colors.Color1)
+      .setTint(Colors.Blue2)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -51,7 +51,7 @@ export default class MenuScene extends Phaser.Scene {
         "ENTER YOUR NAME",
         43
       )
-      .setTint(Colors.Color2)
+      .setTint(Colors.Orange2)
       .setOrigin(0.5, 0.5);
 
     const playerName = window.localStorage.getItem(LS_PLAYER_NAME);
@@ -67,8 +67,8 @@ export default class MenuScene extends Phaser.Scene {
         maxLength: 16,
         fontSize: "64",
         align: "center",
-        color: Colors.getHex(Colors.Color1),
-        backgroundColor: Colors.getHex(Colors.Color5),
+        color: Colors.getHex(Colors.Blue1),
+        backgroundColor: Colors.getHex(Colors.Blue3),
       }
     );
     this.add.existing(nameInput);

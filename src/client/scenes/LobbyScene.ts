@@ -31,7 +31,7 @@ export default class LobbyScene extends Phaser.Scene {
 
     this.add
       .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(Colors.Color1)
+      .setTint(Colors.Orange3)
       .setOrigin(0.5, 0.5);
 
     this.add
@@ -42,7 +42,7 @@ export default class LobbyScene extends Phaser.Scene {
         "A MULTIPLAYER GAME WITH BOUNCING BALLS",
         24
       )
-      .setTint(Colors.Color1)
+      .setTint(Colors.Blue2)
       .setOrigin(0.5, 0.5);
 
     this.connectingLabel = this.add
@@ -53,7 +53,7 @@ export default class LobbyScene extends Phaser.Scene {
         "connecting to server..",
         32
       )
-      .setTint(Colors.Color2)
+      .setTint(Colors.Blue2)
       .setOrigin(0.5, 0.5);
 
     this.server.onRoomsChanged((rooms) => {

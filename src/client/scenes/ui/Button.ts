@@ -17,12 +17,12 @@ export default class Hoop extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.rect = this.scene.add
-      .rectangle(0, 0, width, height, Colors.Color5, 0.75)
+      .rectangle(0, 0, width, height, Colors.Blue3, 0.75)
       .setInteractive({ useHandCursor: true });
 
     this.text = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, text, 32)
-      .setTint(Colors.Color1)
+      .setTint(Colors.Blue1)
       .setOrigin(0.5, 0.5);
 
     this.add(this.rect).add(this.text);

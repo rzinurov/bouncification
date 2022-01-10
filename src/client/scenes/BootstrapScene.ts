@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
@@ -19,6 +20,8 @@ export default class BootstrapScene extends Phaser.Scene {
   }
 
   async create() {
+    this.cameras.main.setBackgroundColor(Colors.Background);
+
     const offScreen = new Phaser.Geom.Rectangle(
       -400,
       0,

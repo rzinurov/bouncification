@@ -1,12 +1,14 @@
 import * as Phaser from "phaser";
 
 export default {
-  Color1: 0xc7cff2,
-  Color2: 0xa1b7ed,
-  Color3: 0x8e9ebf,
-  Color4: 0x606994,
-  Color5: 0x192730,
-  Color6: 0x2e3b43,
+  Blue1: 0xbce0f0,
+  Blue2: 0x219ebc,
+  Blue3: 0x115d72,
+  Background: 0x010d14,
+  Orange1: 0xffb703,
+  Orange2: 0xfd9e02,
+  Orange3: 0xfb8500,
+  Metal: 0x8e9ebf,
   getHex(color: number) {
     return Phaser.Display.Color.IntegerToColor(color).rgba;
   },
