@@ -57,12 +57,15 @@ export default class LobbyScene extends Phaser.Scene {
       .setOrigin(0.5, 0.5);
 
     this.server.onRoomsChanged((rooms) => {
+      console.log("rooms changed", rooms);
+
       Object.keys(this.roomButtons).forEach((roomId) => {
         if (!Object.keys(rooms).includes(roomId)) {
           this.roomButtons[roomId].destroy();
           delete this.roomButtons[roomId];
         }
       });
+
       Object.keys(rooms).forEach((roomId) => {
         const room = rooms[roomId];
         const clients = room.clients;
@@ -86,9 +89,11 @@ export default class LobbyScene extends Phaser.Scene {
           this.roomButtons[roomId].setText(labelText);
         }
       });
+
       Object.values(this.roomButtons).forEach((button, idx) => {
         button.y = height / 2 + 16 + (idx + 1) * 100;
       });
+
       if (this.connectingLabel.visible) {
         this.connectingLabel.setVisible(false);
         const createRoomButton = new Button(

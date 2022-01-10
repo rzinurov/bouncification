@@ -70,6 +70,8 @@ export default class Server {
 
     console.log("joined lobby", this.room);
 
+    this.rooms = {};
+
     this.room.onMessage("rooms", (rooms) => {
       rooms.forEach((room) => {
         this.rooms[room.roomId] = room;
@@ -85,6 +87,10 @@ export default class Server {
     this.room.onMessage("-", (roomId) => {
       delete this.rooms[roomId];
       this.events.emit(Events.RoomsChanged, this.rooms);
+    });
+
+    this.room.onLeave((code) => {
+      this.events.emit(Events.Disconnected);
     });
   }
 
@@ -205,6 +211,7 @@ export default class Server {
   }
 
   removeAllListeners() {
+    console.log("Removing server event listeners");
     this.events.removeAllListeners();
   }
 }
