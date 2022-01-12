@@ -5,6 +5,7 @@ import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import { PlayerState } from "common/schema/PlayerState";
 import { PositionState } from "common/schema/Primitives";
 import { GameState } from "common/schema/GameState";
+import { RoundStates } from "common/schema/RoundState";
 
 const HOOP_BOTTOM_HIT_TIMEOUT = 3000;
 export default class GameWorld {
@@ -16,6 +17,7 @@ export default class GameWorld {
   hoopBottomSensorHits: {
     [name: string]: number;
   } = {};
+  roundStateTimer: number = 0;
 
   constructor(state: GameState) {
     this.state = state;
@@ -26,6 +28,8 @@ export default class GameWorld {
     this.addWorldBounds();
 
     this.engine.gravity.y = 1;
+
+    this.roundStateTimer = state.roundState.switchValueAfter;
   }
 
   addHoop(x: number, y: number) {
@@ -126,7 +130,38 @@ export default class GameWorld {
     Body.setVelocity(player, PlayerPhysics.limitVelocity(velocity));
   }
 
+  nextRoundState() {
+    const roundState = this.state.roundState;
+    switch (roundState.value) {
+      case RoundStates.Practice:
+        roundState.value = RoundStates.Game;
+        roundState.switchValueAfter = 120 * 1000;
+        roundState.topMessage = "GAME IS ON";
+        roundState.bottomMessage = "HIT THE HOOP";
+        this.roundStateTimer = roundState.switchValueAfter;
+        break;
+      case RoundStates.Game:
+        roundState.value = RoundStates.Results;
+        roundState.switchValueAfter = 60 * 1000;
+        roundState.topMessage = "GAME OVER";
+        roundState.bottomMessage = "WELL DONE";
+        this.roundStateTimer = roundState.switchValueAfter;
+        break;
+      case RoundStates.Results:
+        // close the room
+        this.roundStateTimer = 0;
+        break;
+    }
+  }
+
   update(dt: number) {
+    if (this.roundStateTimer - dt > 0) {
+      this.roundStateTimer -= dt;
+    } else {
+      this.roundStateTimer = 0;
+      this.nextRoundState();
+    }
+
     Engine.update(this.engine, dt);
 
     Object.entries(this.players).forEach(([sessionId, player]) => {
@@ -141,6 +176,9 @@ export default class GameWorld {
   }
 
   private onScoreSensorHit(body: Body) {
+    if (this.state.roundState.value !== RoundStates.Game) {
+      return;
+    }
     const playerBody = this.players[body.label];
     if (playerBody && playerBody.velocity.y >= 0) {
       const lastHoopBottomHit = this.hoopBottomSensorHits[body.label] || 0;

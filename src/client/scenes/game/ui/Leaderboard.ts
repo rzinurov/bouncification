@@ -1,9 +1,8 @@
+import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import Phaser from "phaser";
 
-const defaultColor = 0xffdd00;
-const playerColor = 0x00dd00;
 export default class Headerboard extends Phaser.GameObjects.Container {
   nameLabels: Phaser.GameObjects.BitmapText[] = [];
   scoreLabels: Phaser.GameObjects.BitmapText[] = [];
@@ -26,14 +25,14 @@ export default class Headerboard extends Phaser.GameObjects.Container {
 
     this.add(
       this.scene.add
-        .rectangle(0, 0, width, height, 0xffffff, 0.05)
+        .rectangle(0, 0, width, height, Colors.White, 0.05)
         .setOrigin(0, 0)
     );
 
     for (let i = 0; i < this.maxRows; i++) {
       const nameLabel = this.scene.add
         .bitmapText(8, 8 + i * 25, Fonts.Pixel, "", 24)
-        .setTint(defaultColor)
+        .setTint(Colors.Orange1)
         .setOrigin(0, 0) as Phaser.GameObjects.BitmapText;
       this.nameLabels.push(nameLabel);
       this.add(nameLabel);
@@ -64,12 +63,14 @@ export default class Headerboard extends Phaser.GameObjects.Container {
       if (rows.length > i) {
         const row = rows[i];
         const color =
-          row.sessionId === this.playerSessionId ? playerColor : defaultColor;
+          row.sessionId === this.playerSessionId
+            ? Colors.Green
+            : Colors.Orange1;
         this.nameLabels[i].setText(row.name).setTint(color);
         this.scoreLabels[i].setText(row.score).setTint(color);
       } else {
-        this.nameLabels[i].setText("").setTint(defaultColor);
-        this.scoreLabels[i].setText("").setTint(defaultColor);
+        this.nameLabels[i].setText("").setTint(Colors.Orange1);
+        this.scoreLabels[i].setText("").setTint(Colors.Orange1);
       }
     }
   }

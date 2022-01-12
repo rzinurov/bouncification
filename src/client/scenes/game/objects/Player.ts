@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Layers from "client/consts/Layers";
 import Sprites from "client/consts/Sprites";
@@ -9,11 +10,8 @@ const SHADOW_MAX_WIDTH = 96;
 const SHADOW_MAX_HEIGHT = 16;
 const SHADOW_MAX_ALPHA = 0.75;
 
-const DEFAULT_NAME_COLOR = 0xffdd00;
-const PLAYER_NAME_COLOR = 0x00dd00;
-
 const JUMP_TIMEOUT_PERIOD = 3000;
-const JUMP_TIMEOUT_INDICATOR_COLORS = [0xdddddd, 0xff0000];
+const JUMP_TIMEOUT_INDICATOR_COLORS = [Colors.White, Colors.Red];
 export default class Player extends Phaser.Physics.Matter.Image {
   private aim: Phaser.GameObjects.Group;
   private nameLabel: Phaser.GameObjects.BitmapText;
@@ -30,23 +28,23 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.setDepth(Layers.Players);
 
     this.shadow = scene.add
-      .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, 0x000000)
+      .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, Colors.Black)
       .setOrigin(0.5, 0.5)
-      .setDepth(Layers.Back);
+      .setDepth(Layers.Players);
 
     this.scene.add.existing(this);
 
     this.aim = this.scene.add.group([], { classType: Phaser.GameObjects.Arc });
     for (let i = 0; i < 16; i++) {
       const point = this.scene.add
-        .circle(0, 0, 8, 0xffffff, 0.75 - i * 0.05)
+        .circle(0, 0, 8, Colors.White, 0.75 - i * 0.05)
         .setDepth(Layers.Labels);
       this.aim.add(point);
     }
 
     this.nameLabel = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
-      .setTint(isYou ? PLAYER_NAME_COLOR : DEFAULT_NAME_COLOR)
+      .setTint(isYou ? Colors.Green : Colors.Orange1)
       .setOrigin(0.5)
       .setDepth(Layers.Labels);
 

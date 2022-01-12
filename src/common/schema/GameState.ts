@@ -1,8 +1,9 @@
-import { Schema, type, MapSchema } from "@colyseus/schema";
+import { MapSchema, Schema, type } from "@colyseus/schema";
 import { HoopState } from "./HoopState";
 import { LeaderboardRowState } from "./LeaderboardRowState";
 import { PlayerState } from "./PlayerState";
 import { PositionState } from "./Primitives";
+import { RoundState } from "./RoundState";
 
 export class GameState extends Schema {
   @type({ map: PlayerState })
@@ -18,7 +19,6 @@ export class GameState extends Schema {
     new PositionState(0, 0)
   );
 
-  constructor() {
-    super();
-  }
+  @type(RoundState)
+  roundState: RoundState = new RoundState();
 }

@@ -91,7 +91,7 @@ export default class MenuScene extends Phaser.Scene {
           `${this.errorMessage}`,
           24
         )
-        .setTint(0xff0000)
+        .setTint(Colors.Red)
         .setOrigin(0.5, 0.5);
     }
   }

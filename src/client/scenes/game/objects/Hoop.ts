@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Layers from "client/consts/Layers";
 import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
@@ -90,7 +91,7 @@ class Net extends Phaser.GameObjects.Container {
       aplha: number
     ) => {
       graphics.beginPath();
-      graphics.fillStyle(0xbbbbbb, aplha);
+      graphics.fillStyle(Colors.Gray, aplha);
       graphics.fillCircle(particle.position.x, particle.position.y, 2);
       graphics.fillPath();
     };
@@ -102,7 +103,7 @@ class Net extends Phaser.GameObjects.Container {
       aplha: number
     ) => {
       graphics.beginPath();
-      graphics.lineStyle(3, 0xbbbbbb, aplha);
+      graphics.lineStyle(3, Colors.Gray, aplha);
       graphics.lineBetween(
         p1.position.x,
         p1.position.y,

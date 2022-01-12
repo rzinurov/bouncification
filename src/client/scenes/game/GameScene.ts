@@ -8,10 +8,12 @@ import Aim, { TraceEvents } from "./objects/Aim";
 import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
 import Leaderboard from "./ui/Leaderboard";
+import Timer from "./ui/Timer";
 
 export default class GameScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
   trace?: Aim;
+  timer?: Timer;
 
   constructor() {
     super(Scenes.Game);
@@ -44,13 +46,15 @@ export default class GameScene extends Phaser.Scene {
 
       this.leaderboard = new Leaderboard(
         this,
-        this.cameras.main.width - 512 - 16,
+        this.cameras.main.width - 490 - 16,
         16,
-        512,
+        490,
         272,
         10,
         sessionId
       );
+
+      this.timer = new Timer(this, this.cameras.main.width / 2, 76, 240, 120);
     });
 
     server.onPlayerJoined(({ sessionId, state }) => {
@@ -73,6 +77,10 @@ export default class GameScene extends Phaser.Scene {
 
     server.onLeaderboardStateChanged(({ sessionId, state }) => {
       this.leaderboard?.update(sessionId, state);
+    });
+
+    server.onRoundStateChanged(({ state }) => {
+      this.timer?.updateState(state);
     });
 
     const { width, height } = WorldConfig.bounds;

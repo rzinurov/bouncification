@@ -3,6 +3,7 @@ import Rooms from "common/consts/Rooms";
 import type { GameState as GameState } from "common/schema/GameState";
 import type { PlayerState } from "common/schema/PlayerState";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
+import { RoundState } from "common/schema/RoundState";
 
 enum Events {
   InitialState = "initial-state",
@@ -10,7 +11,8 @@ enum Events {
   PlayerJoined = "player-joined",
   PlayerLeft = "player-left",
   PlayerStateChanged = "player-state-changed",
-  LeaderboardChanged = "leaderboard-changed",
+  LeaderboardStateChanged = "leaderboard-state-changed",
+  RoundStateChanged = "round-state-changed",
   RoomsChanged = "rooms-changed",
   Disconnected = "disconnected",
 }
@@ -134,7 +136,7 @@ export default class Server {
       leaderboardState: LeaderboardRowState,
       sessionId: string
     ) => {
-      this.events.emit(Events.LeaderboardChanged, {
+      this.events.emit(Events.LeaderboardStateChanged, {
         sessionId,
         state: leaderboardState,
       });
@@ -143,11 +145,21 @@ export default class Server {
         changes.forEach((change) => {
           leaderboardState[change.field] = change.value;
         });
-        this.events.emit(Events.LeaderboardChanged, {
+        this.events.emit(Events.LeaderboardStateChanged, {
           sessionId,
           state: leaderboardState,
         });
       };
+    };
+
+    const roundState: RoundState = new RoundState();
+    this.room.state.roundState.onChange = (changes: [any]) => {
+      changes.forEach((change) => {
+        roundState[change.field] = change.value;
+      });
+      this.events.emit(Events.RoundStateChanged, {
+        state: roundState,
+      });
     };
 
     this.room.onLeave((code) => {
@@ -195,7 +207,11 @@ export default class Server {
     cb: ({ sessionId: string, state: LeaderboardRowState }) => void,
     context?: any
   ) {
-    this.events.on(Events.LeaderboardChanged, cb, context);
+    this.events.on(Events.LeaderboardStateChanged, cb, context);
+  }
+
+  onRoundStateChanged(cb: ({ state: RoundState }) => void, context?: any) {
+    this.events.on(Events.RoundStateChanged, cb, context);
   }
 
   onDisconnected(cb: () => void, context?: any) {

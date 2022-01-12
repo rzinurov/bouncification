@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
@@ -18,7 +19,7 @@ export default class PreloaderScene extends Phaser.Scene {
     const preloaderHeight = 128;
     this.progressBar = this.add.graphics();
     this.progressContainer = this.add.graphics();
-    this.progressContainer.fillStyle(0x222222, 0.8);
+    this.progressContainer.fillStyle(Colors.Background, 0.8);
     this.progressContainer.fillRect(
       width * 0.25,
       height / 2 - preloaderHeight / 2,
@@ -28,7 +29,7 @@ export default class PreloaderScene extends Phaser.Scene {
 
     this.load.on("progress", (value: number) => {
       this.progressBar.clear();
-      this.progressBar.fillStyle(0xffffff, 1);
+      this.progressBar.fillStyle(Colors.White, 1);
       this.progressBar.fillRect(
         width * 0.25 + 8,
         height / 2 - preloaderHeight / 2 + 8,

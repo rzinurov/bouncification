@@ -1,3 +1,4 @@
+import Colors from "client/consts/Colors";
 import Layers from "client/consts/Layers";
 import PlayerPhysics from "common/physics/PlayerPhysics";
 import Phaser from "phaser";
@@ -19,12 +20,12 @@ export default class Aim extends Phaser.GameObjects.Container {
     this.player = player;
 
     this.anchor = this.scene.add
-      .circle(0, 0, 16, 0xffffff)
+      .circle(0, 0, 16, Colors.White)
       .setDepth(Layers.Labels);
     this.add(this.anchor);
 
     this.cursorLine = this.scene.add
-      .line(0, 0, 0, 0, 0, 0, 0xffffff)
+      .line(0, 0, 0, 0, 0, 0, Colors.White)
       .setLineWidth(4)
       .setOrigin(0, 0)
       .setDepth(Layers.Labels);
