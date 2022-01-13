@@ -3,7 +3,9 @@ import Scenes from "client/consts/Scenes";
 import Sprites from "client/consts/Sprites";
 import Server from "client/services/Server";
 import WorldConfig from "common/consts/WorldConfig";
+import { RoundStates } from "common/schema/RoundState";
 import Phaser from "phaser";
+import PopUpMessage from "../ui/PopUpMessage";
 import Aim, { TraceEvents } from "./objects/Aim";
 import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
@@ -14,6 +16,8 @@ export default class GameScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
   trace?: Aim;
   timer?: Timer;
+  popUpMessage?: PopUpMessage;
+  roundStateValue: number = -1;
 
   constructor() {
     super(Scenes.Game);
@@ -55,6 +59,8 @@ export default class GameScene extends Phaser.Scene {
       );
 
       this.timer = new Timer(this, this.cameras.main.width / 2, 76, 240, 120);
+
+      this.popUpMessage = new PopUpMessage(this);
     });
 
     server.onPlayerJoined(({ sessionId, state }) => {
@@ -81,6 +87,22 @@ export default class GameScene extends Phaser.Scene {
 
     server.onRoundStateChanged(({ state }) => {
       this.timer?.updateState(state);
+      if (this.roundStateValue !== state.value) {
+        switch (state.value) {
+          case RoundStates.Practice:
+            this.popUpMessage?.show(
+              "THE GAME WILL BEGIN SHORTLY\nWAITING FOR MORE PLAYERS"
+            );
+            break;
+          case RoundStates.Game:
+            this.popUpMessage?.show("THE GAME IS ON");
+            break;
+          case RoundStates.Results:
+            this.popUpMessage?.show("THE GAME IS OVER");
+            break;
+        }
+      }
+      this.roundStateValue = state.value;
     });
 
     const { width, height } = WorldConfig.bounds;

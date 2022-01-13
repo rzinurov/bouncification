@@ -30,7 +30,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.shadow = scene.add
       .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, Colors.Black)
       .setOrigin(0.5, 0.5)
-      .setDepth(Layers.Players);
+      .setDepth(Layers.Front);
 
     this.scene.add.existing(this);
 
@@ -38,7 +38,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     for (let i = 0; i < 16; i++) {
       const point = this.scene.add
         .circle(0, 0, 8, Colors.White, 0.75 - i * 0.05)
-        .setDepth(Layers.Labels);
+        .setDepth(Layers.Front);
       this.aim.add(point);
     }
 
@@ -46,12 +46,12 @@ export default class Player extends Phaser.Physics.Matter.Image {
       .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
       .setTint(isYou ? Colors.Green : Colors.Orange1)
       .setOrigin(0.5)
-      .setDepth(Layers.Labels);
+      .setDepth(Layers.Front);
 
     this.jumpTimeoutIndicator = this.scene.add
       .graphics()
       .setAlpha(0.75)
-      .setDepth(Layers.Labels);
+      .setDepth(Layers.Front);
 
     this.updateState(state);
   }
