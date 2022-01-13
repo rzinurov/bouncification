@@ -11,7 +11,7 @@ export class RoundState extends Schema {
   value: number = RoundStates.Practice;
 
   @type("number")
-  switchValueAfter: number = 60000;
+  timer: number = 60000;
 
   @type("string")
   topMessage: string = "game starts in";

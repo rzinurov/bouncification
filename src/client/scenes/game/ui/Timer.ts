@@ -72,7 +72,7 @@ export default class Headerboard extends Phaser.GameObjects.Container {
     console.log("Updating timer state", roundState);
 
     this.topLabel.text = roundState.topMessage;
-    this.timerValue = roundState.switchValueAfter;
+    this.timerValue = roundState.timer;
     this.bottomLabel.text = roundState.bottomMessage;
 
     this.active = true;

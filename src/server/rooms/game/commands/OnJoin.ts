@@ -25,5 +25,6 @@ export class OnJoin extends Command<
       sessionId,
       playerName ? playerName.substring(0, 16) : "anonymous"
     );
+    this.world.updateRoundTimer(); // so that the joined player gets correct timer value
   }
 }

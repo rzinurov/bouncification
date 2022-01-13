@@ -9,15 +9,15 @@ import { RoundStates } from "common/schema/RoundState";
 
 const HOOP_BOTTOM_HIT_TIMEOUT = 3000;
 export default class GameWorld {
-  engine: Matter.Engine;
-  state: GameState;
-  players: {
+  private engine: Matter.Engine;
+  private state: GameState;
+  private players: {
     [name: string]: Body;
   } = {};
-  hoopBottomSensorHits: {
+  private hoopBottomSensorHits: {
     [name: string]: number;
   } = {};
-  roundStateTimer: number = 0;
+  private roundStateTimer: number = 0;
 
   constructor(state: GameState) {
     this.state = state;
@@ -29,7 +29,7 @@ export default class GameWorld {
 
     this.engine.gravity.y = 1;
 
-    this.roundStateTimer = state.roundState.switchValueAfter;
+    this.roundStateTimer = state.roundState.timer;
   }
 
   addHoop(x: number, y: number) {
@@ -135,17 +135,17 @@ export default class GameWorld {
     switch (roundState.value) {
       case RoundStates.Practice:
         roundState.value = RoundStates.Game;
-        roundState.switchValueAfter = 120 * 1000;
+        roundState.timer = 120 * 1000;
         roundState.topMessage = "GAME IS ON";
         roundState.bottomMessage = "HIT THE HOOP";
-        this.roundStateTimer = roundState.switchValueAfter;
+        this.roundStateTimer = roundState.timer;
         break;
       case RoundStates.Game:
         roundState.value = RoundStates.Results;
-        roundState.switchValueAfter = 60 * 1000;
+        roundState.timer = 60 * 1000;
         roundState.topMessage = "GAME OVER";
         roundState.bottomMessage = "WELL DONE";
-        this.roundStateTimer = roundState.switchValueAfter;
+        this.roundStateTimer = roundState.timer;
         break;
       case RoundStates.Results:
         // close the room
@@ -173,6 +173,10 @@ export default class GameWorld {
       playerState.angle = player.angle * (180 / Math.PI);
       playerState.angularVelocity = player.angularVelocity;
     });
+  }
+
+  updateRoundTimer() {
+    this.state.roundState.timer = this.roundStateTimer;
   }
 
   private onScoreSensorHit(body: Body) {
