@@ -4,6 +4,7 @@ export const RoundStates = {
   Practice: 0,
   Game: 1,
   Results: 2,
+  End: 3,
 };
 
 export class RoundState extends Schema {

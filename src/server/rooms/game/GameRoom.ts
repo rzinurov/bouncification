@@ -4,6 +4,7 @@ import { GameState as GameState } from "common/schema/GameState";
 import { OnCreate } from "./commands/OnCreate";
 import { OnJoin } from "./commands/OnJoin";
 import { OnLeave } from "./commands/OnLeave";
+import { OnNextRoundState } from "./commands/OnNextRoundState";
 import GameWorld from "./GameWorld";
 
 export class GameRoom extends Room<GameState> {
@@ -19,7 +20,9 @@ export class GameRoom extends Room<GameState> {
       ownerName: playerName ? playerName.substring(0, 16) : "anonymous",
     }).then(() => updateLobby(this));
 
-    this.world = new GameWorld(this.state);
+    this.world = new GameWorld(this.state, () =>
+      this.dispatcher.dispatch(new OnNextRoundState())
+    );
 
     this.setPatchRate(1000 / 20);
     this.setSimulationInterval((dt) => this.update(dt));

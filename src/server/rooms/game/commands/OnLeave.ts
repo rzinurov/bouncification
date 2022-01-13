@@ -11,6 +11,8 @@ export class OnLeave extends Command<GameRoom, { sessionId: string }> {
   }
 
   execute({ sessionId }: { sessionId: string }) {
+    console.log("OnLeave", this.room.roomId, sessionId);
+
     this.world.removePlayer(sessionId);
   }
 }

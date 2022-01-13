@@ -75,6 +75,9 @@ export default class Server {
     this.rooms = {};
 
     this.room.onMessage("rooms", (rooms) => {
+      console.log("rooms updated", rooms);
+
+      this.rooms = {};
       rooms.forEach((room) => {
         this.rooms[room.roomId] = room;
       });
@@ -82,11 +85,15 @@ export default class Server {
     });
 
     this.room.onMessage("+", ([roomId, room]) => {
+      console.log("room added", roomId);
+
       this.rooms[roomId] = room;
       this.events.emit(Events.RoomsChanged, this.rooms);
     });
 
     this.room.onMessage("-", (roomId) => {
+      console.log("room removed", roomId);
+
       delete this.rooms[roomId];
       this.events.emit(Events.RoomsChanged, this.rooms);
     });

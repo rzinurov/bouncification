@@ -5,7 +5,7 @@ import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import { PlayerState } from "common/schema/PlayerState";
 import { PositionState } from "common/schema/Primitives";
 import { GameState } from "common/schema/GameState";
-import { RoundStates } from "common/schema/RoundState";
+import { RoundState, RoundStates } from "common/schema/RoundState";
 
 const HOOP_BOTTOM_HIT_TIMEOUT = 3000;
 export default class GameWorld {
@@ -18,9 +18,12 @@ export default class GameWorld {
     [name: string]: number;
   } = {};
   private roundStateTimer: number = 0;
+  private onNextRoundState: () => void;
 
-  constructor(state: GameState) {
+  constructor(state: GameState, onNextRoundState: () => void) {
     this.state = state;
+    this.onNextRoundState = onNextRoundState;
+
     this.engine = Engine.create();
     this.engine.enableSleeping = true;
     this.engine.gravity.y = WorldConfig.gravity.y;
@@ -148,10 +151,11 @@ export default class GameWorld {
         this.roundStateTimer = roundState.timer;
         break;
       case RoundStates.Results:
-        // close the room
         this.roundStateTimer = 0;
+        roundState.value = RoundStates.End;
         break;
     }
+    this.onNextRoundState();
   }
 
   update(dt: number) {

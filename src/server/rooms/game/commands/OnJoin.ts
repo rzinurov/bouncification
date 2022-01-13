@@ -20,6 +20,8 @@ export class OnJoin extends Command<
     sessionId: string;
     options: { name: string };
   }) {
+    console.log("OnJoin", this.room.roomId, sessionId);
+
     const playerName = options.name?.trim();
     this.world.addPlayer(
       sessionId,

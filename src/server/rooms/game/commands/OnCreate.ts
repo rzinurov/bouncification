@@ -11,6 +11,8 @@ export class OnCreate extends Command<GameRoom> {
   }
 
   execute() {
+    console.log("OnCreate", this.room.roomId);
+
     this.world.addHoop(100, 350);
 
     this.world.addPlayer("bot_1", "bot");
