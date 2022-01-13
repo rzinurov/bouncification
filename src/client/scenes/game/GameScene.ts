@@ -14,7 +14,7 @@ import Timer from "./ui/Timer";
 
 export default class GameScene extends Phaser.Scene {
   leaderboard?: Leaderboard;
-  trace?: Aim;
+  aim?: Aim;
   timer?: Timer;
   popUpMessage?: PopUpMessage;
   roundStateValue: number = -1;
@@ -42,8 +42,8 @@ export default class GameScene extends Phaser.Scene {
       const player = new Player(this, state, true);
       players[sessionId] = player;
 
-      this.trace = new Aim(this, player);
-      this.trace.on(TraceEvents.Jump, (velocity: { x: number; y: number }) => {
+      this.aim = new Aim(this, player);
+      this.aim.on(TraceEvents.Jump, (velocity: { x: number; y: number }) => {
         player.jump(velocity);
         server.jump(velocity);
       });
@@ -90,14 +90,17 @@ export default class GameScene extends Phaser.Scene {
       if (this.roundStateValue !== state.value) {
         switch (state.value) {
           case RoundStates.Practice:
+            this.aim?.setActive(true);
             this.popUpMessage?.show(
               "THE GAME WILL BEGIN SHORTLY\nWAITING FOR MORE PLAYERS"
             );
             break;
           case RoundStates.Game:
+            this.aim?.setActive(true);
             this.popUpMessage?.show("THE GAME IS ON");
             break;
           case RoundStates.Results:
+            this.aim?.setActive(false);
             this.popUpMessage?.show("THE GAME IS OVER");
             break;
         }

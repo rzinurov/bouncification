@@ -54,11 +54,19 @@ export default class Aim extends Phaser.GameObjects.Container {
     );
   }
 
-  destroy() {
-    super.destroy();
+  setActive(active: boolean) {
+    if (!active) {
+      this.setVisible(false);
+      this.cursorLine.setPosition(0, 0).setTo(0, 0);
+      this.player.clearAimVelocity();
+    }
+    return super.setActive(active);
   }
 
   private onPointerDown(pointer: { x: number; y: number }) {
+    if (!this.active) {
+      return;
+    }
     this.setPosition(pointer.x, pointer.y).setVisible(true);
     this.cursorLine.setPosition(0, 0).setTo(0, 0);
     this.player.setAimVelocity({ x: 0, y: 0 });
@@ -66,7 +74,7 @@ export default class Aim extends Phaser.GameObjects.Container {
 
   private onPointerMove(pointer: { x: number; y: number; isDown: boolean }) {
     {
-      if (!pointer.isDown) {
+      if (!pointer.isDown || !this.active) {
         return;
       }
       const velocity = this.getAimVelocity(pointer);
@@ -79,7 +87,7 @@ export default class Aim extends Phaser.GameObjects.Container {
   }
 
   private onPointerUp(pointer: { x: number; y: number }) {
-    if (!this.visible) {
+    if (!this.visible || !this.active) {
       return;
     }
     this.setVisible(false);
