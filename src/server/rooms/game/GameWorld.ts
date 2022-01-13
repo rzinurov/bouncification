@@ -1,18 +1,23 @@
-import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 import WorldConfig from "common/consts/WorldConfig";
 import PlayerPhysics from "common/physics/PlayerPhysics";
+import { GameState } from "common/schema/GameState";
 import { LeaderboardRowState } from "common/schema/LeaderboardRowState";
 import { PlayerState } from "common/schema/PlayerState";
 import { PositionState } from "common/schema/Primitives";
-import { GameState } from "common/schema/GameState";
-import { RoundState, RoundStates } from "common/schema/RoundState";
+import { RoundStates } from "common/schema/RoundState";
+import { Bodies, Body, Engine, Events, Sleeping, World } from "matter-js";
 
 const HOOP_BOTTOM_HIT_TIMEOUT = 3000;
+const BOT_JUMP_TIMEOUT_MIN = 5000;
+const BOT_JUMP_TIMEOUT_MAX = 7000;
 export default class GameWorld {
   private engine: Matter.Engine;
   private state: GameState;
   private players: {
     [name: string]: Body;
+  } = {};
+  private botJumpTimeouts: {
+    [name: string]: number;
   } = {};
   private hoopBottomSensorHits: {
     [name: string]: number;
@@ -121,6 +126,12 @@ export default class GameWorld {
     this.createLeaderboardRow(sessionId, name);
   }
 
+  addBot(name: string) {
+    const sessionId = "bot_" + Math.random();
+    this.addPlayer(sessionId, name);
+    this.botJumpTimeouts[sessionId] = this.getBotJumpTimeout();
+  }
+
   removePlayer(sessionId: string) {
     World.remove(this.engine.world, this.players[sessionId]);
     delete this.players[sessionId];
@@ -168,6 +179,12 @@ export default class GameWorld {
 
     Engine.update(this.engine, dt);
 
+    this.updatePlayerStates();
+
+    this.updateBots(dt);
+  }
+
+  private updatePlayerStates() {
     Object.entries(this.players).forEach(([sessionId, player]) => {
       const playerState = this.state.players.get(sessionId) as PlayerState;
       playerState.position.x = player.position.x;
@@ -181,6 +198,29 @@ export default class GameWorld {
 
   updateRoundTimer() {
     this.state.roundState.timer = this.roundStateTimer;
+  }
+
+  updateBots(dt: number) {
+    if (
+      ![RoundStates.Practice, RoundStates.Game].includes(
+        this.state.roundState.value
+      )
+    ) {
+      return;
+    }
+    Object.keys(this.botJumpTimeouts).forEach((sessionId) => {
+      let timeout = this.botJumpTimeouts[sessionId];
+      if (timeout - dt > 0) {
+        timeout -= dt;
+      } else {
+        timeout = this.getBotJumpTimeout();
+        this.jump(sessionId, {
+          x: -50 + Math.random() * 100,
+          y: -10 - Math.random() * 40,
+        });
+      }
+      this.botJumpTimeouts[sessionId] = timeout;
+    });
   }
 
   private onScoreSensorHit(body: Body) {
@@ -250,5 +290,12 @@ export default class GameWorld {
     );
 
     World.add(this.engine.world, [wallLeft, wallRight, wallTop, wallBottom]);
+  }
+
+  private getBotJumpTimeout(): number {
+    return (
+      BOT_JUMP_TIMEOUT_MIN +
+      Math.random() * (BOT_JUMP_TIMEOUT_MAX - BOT_JUMP_TIMEOUT_MIN)
+    );
   }
 }
