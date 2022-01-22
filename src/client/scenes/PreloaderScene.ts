@@ -61,11 +61,13 @@ export default class PreloaderScene extends Phaser.Scene {
       instances: 8,
     });
     this.load.audio(Sounds.Message, "assets/snd/message.mp3", {
-      instances: 4,
+      instances: 2,
     });
     this.load.audio(Sounds.Score, "assets/snd/score.mp3", {
-      instances: 4,
+      instances: 2,
     });
+    this.load.audio(Sounds.Timer, "assets/snd/timer.mp3");
+    this.load.audio(Sounds.Button, "assets/snd/button.mp3");
   }
 
   create() {

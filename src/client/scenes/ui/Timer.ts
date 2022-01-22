@@ -1,5 +1,6 @@
 import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
+import Sounds from "client/consts/Sounds";
 import StringUtils from "client/utils/StringUtils";
 import { RoundState } from "common/schema/RoundState";
 import Phaser from "phaser";
@@ -55,10 +56,18 @@ export default class Headerboard extends Phaser.GameObjects.Container {
       this.active = false;
     }
     this.timerLabel.text = this.formatTime(seconds);
-    if (seconds > 10 || time % 1000 < 500) {
+
+    // blinking
+    if (seconds > 10 || this.timerValue % 1000 < 500) {
       this.timerLabel.setTint(Colors.Blue1);
     } else {
       this.timerLabel.setTint(Colors.Red);
+    }
+
+    // sound
+    const secondSwitched = this.timerValue % 1000 < delta;
+    if (seconds <= 11 && secondSwitched) {
+      this.scene.sound.play(Sounds.Timer);
     }
   }
 

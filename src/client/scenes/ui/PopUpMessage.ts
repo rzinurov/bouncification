@@ -3,7 +3,7 @@ import Fonts from "client/consts/Fonts";
 import Layers from "client/consts/Layers";
 import * as Phaser from "phaser";
 
-const SHOW_TIMEOUT = 3000;
+const SHOW_TIMEOUT = 5000;
 
 export default class PopUpMessage extends Phaser.GameObjects.BitmapText {
   timer: number = 0;
@@ -29,7 +29,7 @@ export default class PopUpMessage extends Phaser.GameObjects.BitmapText {
   }
 
   show(text: string) {
-    this.setText(text).setVisible(true).setActive(true);
+    this.setText(text).setVisible(true).setActive(true).setAlpha(1);
     this.timer = SHOW_TIMEOUT;
   }
 
@@ -40,6 +40,8 @@ export default class PopUpMessage extends Phaser.GameObjects.BitmapText {
       this.timer = 0;
     }
     const isActive = this.timer > 0;
-    this.setVisible(isActive).setActive(this.timer > 0);
+    this.setVisible(isActive)
+      .setActive(this.timer > 0)
+      .setAlpha(Math.min(this.timer / 1000, 1));
   }
 }

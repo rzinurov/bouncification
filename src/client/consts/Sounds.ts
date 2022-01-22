@@ -4,6 +4,8 @@ enum Sounds {
   Bounce3 = "bounce-3",
   Message = "message",
   Score = "score",
+  Timer = "timer",
+  Button = "button",
 }
 
 export default Sounds;

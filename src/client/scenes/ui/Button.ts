@@ -1,5 +1,6 @@
 import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
+import Sounds from "client/consts/Sounds";
 import Phaser from "phaser";
 
 export default class Hoop extends Phaser.GameObjects.Container {
@@ -31,7 +32,10 @@ export default class Hoop extends Phaser.GameObjects.Container {
   }
 
   onClick(fn: () => void) {
-    this.rect.on("pointerup", fn);
+    this.rect.on("pointerup", () => {
+      this.scene.sound.play(Sounds.Button);
+      fn();
+    });
   }
 
   setText(text: string) {
