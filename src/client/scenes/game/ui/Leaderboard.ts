@@ -6,7 +6,9 @@ import Phaser from "phaser";
 export default class Headerboard extends Phaser.GameObjects.Container {
   nameLabels: Phaser.GameObjects.BitmapText[] = [];
   scoreLabels: Phaser.GameObjects.BitmapText[] = [];
-  scores = {};
+  scores: {
+    [sessionId: string]: { name: string; score: number; sessionId: string };
+  } = {};
   maxRows: number;
   playerSessionId: string;
 

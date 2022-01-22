@@ -19,7 +19,7 @@ export default class GameWorld {
   private botJumpTimeouts: {
     [name: string]: number;
   } = {};
-  private hoopBottomSensorHits: {
+  private playerScoreTimeout: {
     [name: string]: number;
   } = {};
   private roundStateTimer: number = 0;
@@ -41,8 +41,14 @@ export default class GameWorld {
   }
 
   addHoop(x: number, y: number) {
-    const backBoardOffset = new PositionState(-16, 0);
-    const edgeOffset = new PositionState(168, 92);
+    const backBoardOffset = new PositionState(
+      WorldConfig.hoop.backboard.offset.x,
+      WorldConfig.hoop.backboard.offset.y
+    );
+    const edgeOffset = new PositionState(
+      WorldConfig.hoop.edge.offset.x,
+      WorldConfig.hoop.edge.offset.y
+    );
 
     const backboardConfig = WorldConfig.hoop.backboard;
     const backboardBody = Bodies.rectangle(
@@ -229,16 +235,17 @@ export default class GameWorld {
     }
     const playerBody = this.players[body.label];
     if (playerBody && playerBody.velocity.y >= 0) {
-      const lastHoopBottomHit = this.hoopBottomSensorHits[body.label] || 0;
-      if (lastHoopBottomHit < new Date().getTime() - HOOP_BOTTOM_HIT_TIMEOUT) {
+      const scoreTimeout = this.playerScoreTimeout[body.label] || 0;
+      if (scoreTimeout < new Date().getTime() - HOOP_BOTTOM_HIT_TIMEOUT) {
         this.increaseScore(body.label, 1);
+        this.playerScoreTimeout[body.label] = new Date().getTime();
       }
     }
   }
 
   private onScoreBottomSensorHit(body: Body) {
     if (this.players[body.label]) {
-      this.hoopBottomSensorHits[body.label] = new Date().getTime();
+      this.playerScoreTimeout[body.label] = new Date().getTime();
     }
   }
 

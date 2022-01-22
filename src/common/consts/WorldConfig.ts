@@ -5,11 +5,21 @@ export default {
     restitution: 0.75,
   },
   hoop: {
+    x: 100,
+    y: 350,
     backboard: {
+      offset: {
+        x: -16,
+        y: 0,
+      },
       width: 16,
       height: 320,
     },
     edge: {
+      offset: {
+        x: 168,
+        y: 92,
+      },
       size: 12,
     },
   },

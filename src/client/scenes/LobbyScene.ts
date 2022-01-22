@@ -14,7 +14,7 @@ export enum LobbySceneEvents {
 
 export default class LobbyScene extends Phaser.Scene {
   server!: Server;
-  roomButtons: { [name: string]: Button } = {};
+  roomButtons: { [roomId: string]: Button } = {};
   connectingLabel!: Phaser.GameObjects.BitmapText;
 
   constructor() {

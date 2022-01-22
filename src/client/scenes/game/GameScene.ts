@@ -5,19 +5,22 @@ import Server from "client/services/Server";
 import WorldConfig from "common/consts/WorldConfig";
 import { RoundStates } from "common/schema/RoundState";
 import Phaser from "phaser";
-import PopUpMessage from "../ui/PopUpMessage";
+import PopUpMessage from "./ui/PopUpMessage";
 import Aim, { TraceEvents } from "./objects/Aim";
 import Hoop from "./objects/Hoop";
 import Player from "./objects/Player";
 import Leaderboard from "./ui/Leaderboard";
 import Timer from "./ui/Timer";
+import ScorePopUp from "./ui/ScorePopUp";
 
 export default class GameScene extends Phaser.Scene {
-  leaderboard?: Leaderboard;
-  aim?: Aim;
-  timer?: Timer;
-  popUpMessage?: PopUpMessage;
-  roundStateValue: number = -1;
+  private leaderboard?: Leaderboard;
+  private aim?: Aim;
+  private timer?: Timer;
+  private popUpMessage?: PopUpMessage;
+  private roundStateValue: number = -1;
+  private scorePopUps!: Phaser.GameObjects.Group;
+  private scores: { [sessionId: string]: number } = {};
 
   constructor() {
     super(Scenes.Game);
@@ -27,6 +30,10 @@ export default class GameScene extends Phaser.Scene {
     const { server } = data;
 
     const players: { [name: string]: Player } = {};
+
+    this.scorePopUps = this.add
+      .group({ classType: ScorePopUp })
+      .setDepth(Layers.Labels);
 
     server.onInitialState((state) => {
       this.add
@@ -83,6 +90,11 @@ export default class GameScene extends Phaser.Scene {
 
     server.onLeaderboardStateChanged(({ sessionId, state }) => {
       this.leaderboard?.update(sessionId, state);
+      const points = state.score - this.scores[sessionId] || 0;
+      if (points > 0) {
+        this.scorePopUps.create(points);
+      }
+      this.scores[sessionId] = state.score;
     });
 
     server.onRoundStateChanged(({ state }) => {
