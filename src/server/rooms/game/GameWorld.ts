@@ -65,45 +65,45 @@ export default class GameWorld {
       edgeConfig.size / 2
     );
 
-    const hoopSensorBody = Bodies.circle(
+    const sensorBody = Bodies.circle(
       x + edgeOffset.x / 2,
-      y + edgeOffset.y + 32,
+      y + edgeOffset.y + 48,
       8,
       {
         isStatic: true,
         isSensor: true,
       }
     );
-    hoopSensorBody.label = "hoop_sensor";
+    sensorBody.label = "hoop_sensor";
 
-    const hoopBottomSensorBody = Bodies.circle(
+    const bottomSensorBody = Bodies.circle(
       x + edgeOffset.x / 2,
-      y + edgeOffset.y + 64,
+      y + edgeOffset.y + 80,
       8,
       {
         isStatic: true,
         isSensor: true,
       }
     );
-    hoopBottomSensorBody.label = "hoop_bottom_sensor";
+    bottomSensorBody.label = "hoop_bottom_sensor";
 
     Events.on(this.engine, "collisionStart", (event) => {
       event.pairs.forEach((pair) => {
-        if (pair.bodyA.label === hoopSensorBody.label) {
+        if (pair.bodyA.label === sensorBody.label) {
           this.onScoreSensorHit(pair.bodyB);
-        } else if (pair.bodyB.label === hoopSensorBody.label) {
+        } else if (pair.bodyB.label === sensorBody.label) {
           this.onScoreSensorHit(pair.bodyA);
         }
-        if (pair.bodyA.label === hoopBottomSensorBody.label) {
+        if (pair.bodyA.label === bottomSensorBody.label) {
           this.onScoreBottomSensorHit(pair.bodyB);
-        } else if (pair.bodyB.label === hoopBottomSensorBody.label) {
+        } else if (pair.bodyB.label === bottomSensorBody.label) {
           this.onScoreBottomSensorHit(pair.bodyA);
         }
       });
     });
 
     const hoop = Body.create({
-      parts: [backboardBody, edgeBody, hoopSensorBody, hoopBottomSensorBody],
+      parts: [backboardBody, edgeBody, sensorBody, bottomSensorBody],
       isStatic: true,
     });
 

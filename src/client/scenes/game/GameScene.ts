@@ -106,14 +106,17 @@ export default class GameScene extends Phaser.Scene {
             this.popUpMessage?.show(
               "THE GAME WILL BEGIN SHORTLY\nWAITING FOR MORE PLAYERS"
             );
+            this.leaderboard?.setScoresVisible(false);
             break;
           case RoundStates.Game:
             this.aim?.setActive(true);
             this.popUpMessage?.show("THE GAME IS ON");
+            this.leaderboard?.setScoresVisible(true);
             break;
           case RoundStates.Results:
             this.aim?.setActive(false);
             this.popUpMessage?.show("THE GAME IS OVER");
+            this.leaderboard?.setScoresVisible(true);
             break;
         }
       }
