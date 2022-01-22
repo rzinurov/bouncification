@@ -6,7 +6,7 @@ import BootstrapScene from "./scenes/BootstrapScene";
 import LobbyScene from "./scenes/LobbyScene";
 import MenuScene from "./scenes/MenuScene";
 import PreloaderScene from "./scenes/PreloaderScene";
-import GameScene from "./scenes/game/GameScene";
+import GameScene from "./scenes/GameScene";
 
 const debugConfig = {
   showAxes: false,
