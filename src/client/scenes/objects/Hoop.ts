@@ -1,3 +1,4 @@
+import BodyLabels from "client/consts/BodyLabels";
 import Colors from "client/consts/Colors";
 import Layers from "client/consts/Layers";
 import Sprites from "client/consts/Sprites";
@@ -29,13 +30,15 @@ export default class Hoop extends Phaser.GameObjects.Container {
       state.position.x + state.backboardOffset.x,
       state.position.y + state.backboardOffset.y,
       backboardConfig.width,
-      backboardConfig.height
+      backboardConfig.height,
+      { label: BodyLabels.HoopBackboard }
     );
 
     const edgeBody = Bodies.circle(
       state.position.x + state.edgeOffset.x,
       state.position.y + state.edgeOffset.y,
-      edgeConfig.size / 2
+      edgeConfig.size / 2,
+      { label: BodyLabels.HoopEdge }
     );
 
     this.scene.matter.add.gameObject(this, {
@@ -153,6 +156,7 @@ class Net extends Phaser.GameObjects.Container {
       friction: 0.001,
       collisionFilter: { group: group },
       render: { visible: false },
+      label: BodyLabels.HoopNet,
     };
     const constraintOptions = { stiffness: 0.1 };
 

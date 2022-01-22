@@ -1,3 +1,4 @@
+import BodyLabels from "client/consts/BodyLabels";
 import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Layers from "client/consts/Layers";
@@ -23,7 +24,9 @@ export default class Player extends Phaser.Physics.Matter.Image {
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
     super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
 
-    this.setCircle(WorldConfig.player.spriteSize / 2);
+    this.setCircle(WorldConfig.player.spriteSize / 2, {
+      label: BodyLabels.Ball,
+    });
     this.setBounce(WorldConfig.player.restitution);
     this.setDepth(Layers.Players);
 

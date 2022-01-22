@@ -1,6 +1,7 @@
 import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Scenes from "client/consts/Scenes";
+import Sounds from "client/consts/Sounds";
 import Sprites from "client/consts/Sprites";
 import Phaser from "phaser";
 
@@ -49,6 +50,22 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.image(Sprites.Floor, "assets/img/floor.png");
     this.load.image(Sprites.Hoop, "assets/img/hoop.png");
     this.load.image(Sprites.HoopFront, "assets/img/hoop-front.png");
+
+    this.load.audio(Sounds.Bounce1, "assets/snd/bounce_1.mp3", {
+      instances: 8,
+    });
+    this.load.audio(Sounds.Bounce2, "assets/snd/bounce_2.mp3", {
+      instances: 8,
+    });
+    this.load.audio(Sounds.Bounce3, "assets/snd/bounce_3.mp3", {
+      instances: 8,
+    });
+    this.load.audio(Sounds.Message, "assets/snd/message.mp3", {
+      instances: 4,
+    });
+    this.load.audio(Sounds.Score, "assets/snd/score.mp3", {
+      instances: 4,
+    });
   }
 
   create() {
