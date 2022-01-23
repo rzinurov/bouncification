@@ -130,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
     const maxImpulse = 20;
 
     this.matter.world.on("collisionstart", (_: any, a: any, b: any) => {
-      const currentTime = new Date().getTime();
+      const currentTime = Date.now();
       const impulse = Math.sqrt(
         Math.pow(a.velocity?.x || 0 - b.velocity?.x || 0, 2) +
           Math.pow(a.velovity?.y || 0 - b.velocity?.y || 0, 2)

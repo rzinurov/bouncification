@@ -148,7 +148,7 @@ export default class GameWorld {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
     Body.setVelocity(player, PlayerPhysics.limitVelocity(velocity));
-    this.state.players.get(sessionId)!.lastJumpTime = new Date().getTime();
+    this.state.players.get(sessionId)!.lastJumpTime = Date.now();
   }
 
   nextRoundState() {
@@ -237,16 +237,16 @@ export default class GameWorld {
     const playerBody = this.players[body.label];
     if (playerBody && playerBody.velocity.y >= 0) {
       const scoreTimeout = this.playerScoreTimeout[body.label] || 0;
-      if (scoreTimeout < new Date().getTime() - HOOP_BOTTOM_HIT_TIMEOUT) {
+      if (scoreTimeout < Date.now() - HOOP_BOTTOM_HIT_TIMEOUT) {
         this.increaseScore(body.label, 1);
-        this.playerScoreTimeout[body.label] = new Date().getTime();
+        this.playerScoreTimeout[body.label] = Date.now();
       }
     }
   }
 
   private onScoreBottomSensorHit(body: Body) {
     if (this.players[body.label]) {
-      this.playerScoreTimeout[body.label] = new Date().getTime();
+      this.playerScoreTimeout[body.label] = Date.now();
     }
   }
 

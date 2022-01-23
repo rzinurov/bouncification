@@ -14,6 +14,7 @@ const SHADOW_MAX_ALPHA = 0.75;
 
 const JUMP_TIMEOUT_PERIOD = 3000;
 const JUMP_TIMEOUT_INDICATOR_COLORS = [Colors.White, Colors.Red];
+const JUMP_PARTICLE_TIMEOUT = 500;
 export default class Player extends Phaser.Physics.Matter.Image {
   private aim: Phaser.GameObjects.Group;
   private nameLabel: Phaser.GameObjects.BitmapText;
@@ -22,9 +23,22 @@ export default class Player extends Phaser.Physics.Matter.Image {
   private jumpTimeout: number = 0;
   private jumpTimeoutIndicator: Phaser.GameObjects.Graphics;
   private lastJumpTime: number = 0;
+  private jumpParticleEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
     super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
+
+    this.jumpParticleEmitter = this.scene.add
+      .particles(Sprites.ParticleBlue)
+      .setDepth(Layers.Particles)
+      .createEmitter({
+        speed: 100,
+        scale: { start: 0.05, end: 0.5 },
+        alpha: { start: 1, end: 0 },
+        lifespan: 750,
+        follow: this,
+      })
+      .stop();
 
     this.setCircle(WorldConfig.player.spriteSize / 2, {
       label: BodyLabels.Ball,
@@ -111,6 +125,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.updateAim();
     this.updateShadow();
     this.updateJumpTimeoutIndicator(dt);
+    this.updateParticles();
   }
 
   private updateNameLabelPosition() {
@@ -216,6 +231,22 @@ export default class Player extends Phaser.Physics.Matter.Image {
       )
       .strokePath()
       .setVisible(true);
+  }
+
+  private updateParticles() {
+    const time = Date.now();
+    if (
+      !this.jumpParticleEmitter.on &&
+      time < this.lastJumpTime + JUMP_PARTICLE_TIMEOUT
+    ) {
+      this.jumpParticleEmitter.start();
+    }
+    if (
+      this.jumpParticleEmitter.on &&
+      time > this.lastJumpTime + JUMP_PARTICLE_TIMEOUT
+    ) {
+      this.jumpParticleEmitter.stop();
+    }
   }
 
   private getPosition() {

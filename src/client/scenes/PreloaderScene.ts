@@ -50,6 +50,8 @@ export default class PreloaderScene extends Phaser.Scene {
     this.load.image(Sprites.Floor, "assets/img/floor.png");
     this.load.image(Sprites.Hoop, "assets/img/hoop.png");
     this.load.image(Sprites.HoopFront, "assets/img/hoop-front.png");
+    this.load.image(Sprites.ParticleBlue, "assets/img/particle-blue.png");
+    this.load.image(Sprites.ParticleYellow, "assets/img/particle-yellow.png");
 
     this.load.audio(Sounds.Bounce1, "assets/snd/bounce_1.mp3", {
       instances: 8,
