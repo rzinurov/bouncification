@@ -5,6 +5,8 @@ import Button from "./ui/Button";
 import InputText from "phaser3-rex-plugins/plugins/inputtext.js";
 import Names from "client/utils/Names";
 import Colors from "client/consts/Colors";
+import MadeBy from "./ui/MadeBy";
+import Header from "./ui/Header";
 
 export enum MenuSceneEvents {
   ConnectButtonClicked = "connect-button-clicked",
@@ -27,21 +29,7 @@ export default class MenuScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    this.add
-      .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(Colors.Orange3)
-      .setOrigin(0.5, 0.5);
-
-    this.add
-      .bitmapText(
-        width / 2,
-        216,
-        Fonts.Pixel,
-        "A MULTIPLAYER GAME WITH BOUNCING BALLS",
-        24
-      )
-      .setTint(Colors.Blue2)
-      .setOrigin(0.5, 0.5);
+    this.add.existing(new Header(this, width, height));
 
     this.add
       .bitmapText(
@@ -73,6 +61,19 @@ export default class MenuScene extends Phaser.Scene {
     );
     this.add.existing(nameInput);
 
+    if (this.errorMessage) {
+      this.add
+        .bitmapText(
+          width / 2,
+          height * 0.63,
+          Fonts.Pixel,
+          `${this.errorMessage}`,
+          24
+        )
+        .setTint(Colors.Red)
+        .setOrigin(0.5, 0.5);
+    }
+
     const connectButton = new Button(this, width / 2, height * 0.75, "CONNECT");
     connectButton.onClick(() => {
       const enteredName = nameInput.text.trim();
@@ -82,17 +83,6 @@ export default class MenuScene extends Phaser.Scene {
       });
     });
 
-    if (this.errorMessage) {
-      this.add
-        .bitmapText(
-          width / 2,
-          height * 0.85,
-          Fonts.Pixel,
-          `${this.errorMessage}`,
-          24
-        )
-        .setTint(Colors.Red)
-        .setOrigin(0.5, 0.5);
-    }
+    this.add.existing(new MadeBy(this, width, height));
   }
 }

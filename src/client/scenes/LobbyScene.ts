@@ -6,6 +6,8 @@ import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
 import GameWorld from "../../../dist/server/server/rooms/game/GameWorld";
 import Button from "./ui/Button";
+import Header from "./ui/Header";
+import MadeBy from "./ui/MadeBy";
 
 export enum LobbySceneEvents {
   CreateButtonClicked = "create-button-clicked",
@@ -29,21 +31,7 @@ export default class LobbyScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    this.add
-      .bitmapText(width / 2, 128, Fonts.Pixel, "BOUNCIFICATION", 75)
-      .setTint(Colors.Orange3)
-      .setOrigin(0.5, 0.5);
-
-    this.add
-      .bitmapText(
-        width / 2,
-        216,
-        Fonts.Pixel,
-        "A MULTIPLAYER GAME WITH BOUNCING BALLS",
-        24
-      )
-      .setTint(Colors.Blue2)
-      .setOrigin(0.5, 0.5);
+    this.add.existing(new Header(this, width, height));
 
     this.connectingLabel = this.add
       .bitmapText(
@@ -108,5 +96,7 @@ export default class LobbyScene extends Phaser.Scene {
         });
       }
     });
+
+    this.add.existing(new MadeBy(this, width, height));
   }
 }
