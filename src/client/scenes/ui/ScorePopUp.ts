@@ -20,7 +20,6 @@ export default class ScorePopUp extends Phaser.GameObjects.Container {
     this.label = this.scene.add
       .bitmapText(0, 0, Fonts.Pixel, `+${points}`, 40)
       .setTint(Colors.Orange1)
-      .setDropShadow(2, 2, Colors.Background)
       .setOrigin(0.5, 0.5);
     this.add(this.label);
 

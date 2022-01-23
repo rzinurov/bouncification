@@ -18,10 +18,7 @@ export default class PopUpMessage extends Phaser.GameObjects.BitmapText {
       40,
       Phaser.GameObjects.BitmapText.ALIGN_CENTER
     );
-    this.setOrigin(0.5, 0.5)
-      .setDepth(Layers.Labels)
-      .setDropShadow(4, 4, Colors.Background)
-      .setTint(Colors.Orange3);
+    this.setOrigin(0.5, 0.5).setDepth(Layers.Labels).setTint(Colors.Orange1);
 
     this.setVisible(false).setActive(false);
 

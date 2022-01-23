@@ -5,7 +5,7 @@ export default {
   Blue2: 0x219ebc,
   Blue3: 0x115d72,
   Background: 0x010d14,
-  Orange1: 0xffb703,
+  Orange1: 0xffbf1f,
   Orange2: 0xfd9e02,
   Orange3: 0xfb8500,
   Green: 0x00dd00,

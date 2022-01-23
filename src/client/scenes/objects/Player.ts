@@ -49,6 +49,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
       .bitmapText(0, 0, Fonts.Pixel, state.name, 24)
       .setTint(isYou ? Colors.Green : Colors.Orange1)
       .setOrigin(0.5)
+      .setDropShadow(2, 2, Colors.Background)
       .setDepth(Layers.Front);
 
     this.jumpTimeoutIndicator = this.scene.add
