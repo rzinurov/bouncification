@@ -4,10 +4,10 @@ import Scenes from "client/consts/Scenes";
 import Server from "client/services/Server";
 import WorldConfig from "common/consts/WorldConfig";
 import Phaser from "phaser";
-import GameWorld from "../../../dist/server/server/rooms/game/GameWorld";
 import Button from "./ui/Button";
 import Header from "./ui/Header";
 import MadeBy from "./ui/MadeBy";
+import RoomList from "./ui/RoomList";
 
 export enum LobbySceneEvents {
   CreateButtonClicked = "create-button-clicked",
@@ -16,8 +16,6 @@ export enum LobbySceneEvents {
 
 export default class LobbyScene extends Phaser.Scene {
   server!: Server;
-  roomButtons: { [roomId: string]: Button } = {};
-  connectingLabel!: Phaser.GameObjects.BitmapText;
 
   constructor() {
     super(Scenes.Lobby);
@@ -33,7 +31,17 @@ export default class LobbyScene extends Phaser.Scene {
 
     this.add.existing(new Header(this, width, height));
 
-    this.connectingLabel = this.add
+    const selectRoomLabel = this.add
+      .bitmapText(width / 2, height / 2 - 160, Fonts.Pixel, "SELECT A ROOM", 43)
+      .setTint(Colors.Orange2)
+      .setOrigin(0.5, 0.5)
+      .setVisible(false);
+
+    const roomList = this.add
+      .existing(new RoomList(this, width, height))
+      .setVisible(false);
+
+    const connectingLabel = this.add
       .bitmapText(
         WorldConfig.bounds.width / 2,
         WorldConfig.bounds.height * 0.6,
@@ -47,49 +55,18 @@ export default class LobbyScene extends Phaser.Scene {
     this.server.onRoomsChanged((rooms) => {
       console.log("rooms changed", rooms);
 
-      Object.keys(this.roomButtons).forEach((roomId) => {
-        if (!Object.keys(rooms).includes(roomId)) {
-          this.roomButtons[roomId].destroy();
-          delete this.roomButtons[roomId];
-        }
-      });
+      roomList.update(rooms);
 
-      Object.keys(rooms).forEach((roomId) => {
-        const room = rooms[roomId];
-        const clients = room.clients;
-        const maxClients = room.maxClients;
-        const ownerName = room.metadata.ownerName;
-        const labelText = `${ownerName} ${clients}/${maxClients}`;
-        if (!Object.keys(this.roomButtons).includes(roomId)) {
-          const button = new Button(
-            this,
-            width / 2,
-            height / 2,
-            labelText,
-            width * 0.5
-          );
-          button.onClick(() => {
-            this.events.emit(LobbySceneEvents.JoinButtonClicked, roomId);
-          });
-          this.roomButtons[roomId] = button;
-          this.add.existing(button);
-        } else {
-          this.roomButtons[roomId].setText(labelText);
-        }
-      });
+      if (connectingLabel.visible) {
+        connectingLabel.setVisible(false);
+        selectRoomLabel.setVisible(true);
+        roomList.setVisible(true);
 
-      Object.values(this.roomButtons).forEach((button, idx) => {
-        button.y = height / 2 + 16 + (idx + 1) * 100;
-      });
-
-      if (this.connectingLabel.visible) {
-        this.connectingLabel.setVisible(false);
         const createRoomButton = new Button(
           this,
           width / 2,
-          height / 2,
-          "CREATE ROOM",
-          width * 0.5
+          height * 0.75,
+          "CREATE ROOM"
         );
         createRoomButton.onClick(() => {
           this.events.emit(LobbySceneEvents.CreateButtonClicked);

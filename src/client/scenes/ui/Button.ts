@@ -12,7 +12,7 @@ export default class Hoop extends Phaser.GameObjects.Container {
     x: number,
     y: number,
     text: string,
-    width: number = 320,
+    width: number = 512,
     height: number = 96
   ) {
     super(scene, x, y);
