@@ -33,7 +33,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
     this.shadow = scene.add
       .ellipse(0, 0, SHADOW_MAX_WIDTH, SHADOW_MAX_HEIGHT, Colors.Black)
       .setOrigin(0.5, 0.5)
-      .setDepth(Layers.Front);
+      .setDepth(Layers.Shadows);
 
     this.scene.add.existing(this);
 
