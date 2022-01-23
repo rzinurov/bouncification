@@ -2,6 +2,7 @@ import BodyLabels from "client/consts/BodyLabels";
 import Colors from "client/consts/Colors";
 import Fonts from "client/consts/Fonts";
 import Layers from "client/consts/Layers";
+import Sounds from "client/consts/Sounds";
 import Sprites from "client/consts/Sprites";
 import WorldConfig from "common/consts/WorldConfig";
 import { PlayerState } from "common/schema/PlayerState";
@@ -20,6 +21,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
   private shadow: Phaser.GameObjects.Ellipse;
   private jumpTimeout: number = 0;
   private jumpTimeoutIndicator: Phaser.GameObjects.Graphics;
+  private lastJumpTime: number = 0;
 
   constructor(scene: Phaser.Scene, state: PlayerState, isYou: boolean) {
     super(scene.matter.world, state.position.x, state.position.y, Sprites.Ball);
@@ -94,6 +96,11 @@ export default class Player extends Phaser.Physics.Matter.Image {
     if (checkNumberDiff(this.angle, state.angle)) {
       this.setAngle(state.angle);
       this.setAwake();
+    }
+    if (this.lastJumpTime !== state.lastJumpTime) {
+      const pan = -0.5 + this.x / WorldConfig.bounds.width;
+      this.scene.sound.play(Sounds.Jump, { pan, volume: 0.5 });
+      this.lastJumpTime = state.lastJumpTime;
     }
     this.setVelocity(state.velocity.x, state.velocity.y);
     this.setAngularVelocity(state.angularVelocity);

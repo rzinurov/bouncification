@@ -148,6 +148,7 @@ export default class GameWorld {
     const player = this.players[sessionId];
     Sleeping.set(player, false);
     Body.setVelocity(player, PlayerPhysics.limitVelocity(velocity));
+    this.state.players.get(sessionId)!.lastJumpTime = new Date().getTime();
   }
 
   nextRoundState() {
