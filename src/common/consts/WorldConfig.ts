@@ -3,6 +3,7 @@ export default {
     spriteSize: 128,
     maxVelocity: 100,
     restitution: 0.75,
+    friction: 0.9,
   },
   hoop: {
     x: 100,

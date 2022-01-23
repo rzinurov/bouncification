@@ -44,6 +44,7 @@ export default class Player extends Phaser.Physics.Matter.Image {
       label: BodyLabels.Ball,
     });
     this.setBounce(WorldConfig.player.restitution);
+    this.setFriction(WorldConfig.player.friction);
     this.setDepth(Layers.Players);
 
     this.shadow = scene.add

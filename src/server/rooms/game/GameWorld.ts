@@ -123,6 +123,7 @@ export default class GameWorld {
     const player = Bodies.circle(x, y, WorldConfig.player.spriteSize / 2);
     player.label = sessionId;
     player.restitution = WorldConfig.player.restitution;
+    player.friction = WorldConfig.player.friction;
     Body.setVelocity(player, { x: -10 + Math.random() * 20, y: 0 });
     Body.setAngle(player, -Math.PI / 4 + (Math.PI * Math.random()) / 2);
     World.add(this.engine.world, [player]);
