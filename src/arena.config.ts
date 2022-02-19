@@ -17,7 +17,9 @@ export default Arena({
   },
 
   initializeExpress: (app) => {
-    app.use("/colyseus", monitor());
+    if (process.env.NODE_ENV === "development") {
+      app.use("/colyseus", monitor());
+    }
 
     app.use(express.static(__dirname + "/public"));
   },
