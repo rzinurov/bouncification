@@ -8,10 +8,6 @@ It's using [Colyseus game server](https://www.colyseus.io/), and is running on [
 
 [matter.js](https://brm.io/matter-js/) physics engine is used on both client and server sides.
 
-⚠️ Please note that the server is located in Germany, and your game experience may be different depending on your proximity to the data center.
-
-[You can play it here](https://aexy8j.colyseus.de/)
-
 ![Bouncification](https://user-images.githubusercontent.com/8040747/154810647-74c16911-94e2-40b5-8052-bcdfc38fdfaa.gif)
 
 ## Local development
