@@ -4,7 +4,7 @@ A browser multiplayer game with bouncing balls.
 
 Cliend side is written in TypeScript using [Phaser](https://phaser.io/) game framework, and is based on [parcel template by Ourcade](https://github.com/ourcade/phaser3-parcel-template).
 
-It's using [Colyseus game server](https://www.colyseus.io/), and is running on [Colyseus Arena cloud hosting](https://www.colyseus.io/arena) under a free tier.
+It's using [Colyseus game server](https://www.colyseus.io/), and can run on [Colyseus Cloud Hosting](https://colyseus.io/cloud-managed-hosting/) under a free tier.
 
 [matter.js](https://brm.io/matter-js/) physics engine is used on both client and server sides.
 
